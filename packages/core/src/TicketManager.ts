@@ -90,6 +90,27 @@ export class TicketManager {
     return tickets;
   }
 
+  async updateTicketStatus(ticketId: string, newStatus: TicketStatus): Promise<void> {
+    await this.ensureInitialized();
+    const dir = this.pmtDir();
+    const files = await this.findMarkdownFiles(dir);
+    for (const filePath of files) {
+      const raw = await fs.readFile(filePath, 'utf8');
+      const parsed = matter(raw);
+      const id = parsed.data?.id ? String(parsed.data.id) : undefined;
+      if (id !== ticketId) continue;
+
+      // Update frontmatter only; file location is organizational and unchanged
+      parsed.data = parsed.data || {};
+      parsed.data.status = newStatus;
+      parsed.data.updated = new Date().toISOString();
+      const next = matter.stringify(parsed.content, parsed.data);
+      await fs.writeFile(filePath, next, 'utf8');
+      return;
+    }
+    throw new Error(`Ticket not found: ${ticketId}`);
+  }
+
   private async generateId(title: string): Promise<string> {
     // simple slug + timestamp
     const slug = title

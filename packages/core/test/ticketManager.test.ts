@@ -31,4 +31,18 @@ describe('TicketManager', () => {
     const todos = await manager.listTickets({ status: 'todo' });
     expect(todos.every(t => t.status === 'todo')).toBe(true);
   });
+
+  it('updates ticket status by id', async () => {
+    const manager = new TicketManager();
+    const created = await manager.createTicket({ title: 'Move me', status: 'todo' });
+    await manager.updateTicketStatus(created.id, 'in-progress');
+    const list = await manager.listTickets();
+    expect(list[0].status).toBe('in-progress');
+  });
+
+  it('throws on unknown ticket id', async () => {
+    const manager = new TicketManager();
+    await manager.createTicket({ title: 'Only one' });
+    await expect(manager.updateTicketStatus('ticket-does-not-exist', 'done')).rejects.toThrow(/not found/i);
+  });
 });
