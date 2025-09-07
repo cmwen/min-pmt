@@ -27,7 +27,9 @@
   "devDependencies": {
     "vitest": "latest"
   },
-  "publishConfig": { "access": "public" },
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/cmwen/min-pmt.git",

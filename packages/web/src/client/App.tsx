@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'preact/hooks';
-import { KanbanBoard } from './components/KanbanBoard';
+import { useEffect, useState } from 'preact/hooks';
 import { Header } from './components/Header';
+import { KanbanBoard } from './components/KanbanBoard';
 
 export interface Ticket {
   id: string;
@@ -37,7 +37,7 @@ export function App() {
       const response = await fetch('/api/tickets', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title })
+        body: JSON.stringify({ title }),
       });
       if (!response.ok) throw new Error('Failed to create ticket');
       await fetchTickets(); // Refresh the list
@@ -52,7 +52,7 @@ export function App() {
       const response = await fetch(`/api/tickets/${ticketId}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: newStatus })
+        body: JSON.stringify({ status: newStatus }),
       });
       if (!response.ok) throw new Error('Failed to update ticket');
       await fetchTickets(); // Refresh the list
@@ -77,7 +77,7 @@ export function App() {
     return (
       <div>
         <Header onAddTicket={handleAddTicket} />
-        <div className="loading">Loading tickets...</div>
+        <div className='loading'>Loading tickets...</div>
       </div>
     );
   }
@@ -85,10 +85,7 @@ export function App() {
   return (
     <div>
       <Header onAddTicket={handleAddTicket} />
-      <KanbanBoard 
-        tickets={tickets} 
-        onUpdateStatus={updateTicketStatus}
-      />
+      <KanbanBoard tickets={tickets} onUpdateStatus={updateTicketStatus} />
     </div>
   );
 }

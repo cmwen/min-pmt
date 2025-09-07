@@ -6,7 +6,7 @@ export function sum(a: number, b: number): number {
   return a + b;
 }
 
-export { ConfigLoader } from './ConfigLoader.js';
+export { ConfigLoader, initializeConfig, loadConfig } from './ConfigLoader.js';
 export { TicketManager } from './TicketManager.js';
 export type { ProjectConfig, Ticket, TicketStatus } from './types.js';
 export {
