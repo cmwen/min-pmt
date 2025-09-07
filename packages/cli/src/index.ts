@@ -4,9 +4,26 @@ import {
   CreateTicketSchema,
   ListTicketsQuerySchema,
   TicketManager,
+  type TicketStatus,
   TicketStatusSchema,
 } from '@cmwen/min-pmt-core';
 import { Command } from 'commander';
+
+interface AddOptions {
+  description?: string;
+  priority?: 'low' | 'medium' | 'high' | 'critical';
+  labels?: string;
+  status?: TicketStatus;
+}
+
+interface ListOptions {
+  status?: TicketStatus;
+  priority?: 'low' | 'medium' | 'high' | 'critical';
+}
+
+interface WebOptions {
+  port: string;
+}
 
 export async function runCli(argv: string[] = process.argv): Promise<void> {
   const program = new Command();
@@ -30,7 +47,7 @@ export async function runCli(argv: string[] = process.argv): Promise<void> {
     .option('-p, --priority <priority>', 'Priority level')
     .option('-l, --labels <labels>', 'Comma-separated labels')
     .option('-s, --status <status>', 'Initial status')
-    .action(async (title: string, options: any) => {
+    .action(async (title: string, options: AddOptions) => {
       const cfg = await ConfigLoader.load();
       const tm = new TicketManager(cfg);
       const labels = options.labels
@@ -58,7 +75,7 @@ export async function runCli(argv: string[] = process.argv): Promise<void> {
         process.exitCode = 1;
         return;
       }
-      const created = await tm.createTicket(parsed.data as any);
+      const created = await tm.createTicket(parsed.data);
       process.stdout.write(`${created.id}\n`);
     });
 
@@ -68,7 +85,7 @@ export async function runCli(argv: string[] = process.argv): Promise<void> {
     .description('List all tickets')
     .option('-s, --status <status>', 'Filter by status')
     .option('-p, --priority <priority>', 'Filter by priority')
-    .action(async (options: any) => {
+    .action(async (options: ListOptions) => {
       const cfg = await ConfigLoader.load();
       const tm = new TicketManager(cfg);
       const q = ListTicketsQuerySchema.safeParse({
@@ -81,7 +98,7 @@ export async function runCli(argv: string[] = process.argv): Promise<void> {
         process.exitCode = 1;
         return;
       }
-      const tickets = await tm.listTickets(q.data as any);
+      const tickets = await tm.listTickets(q.data);
       // Simple table
       const rows = tickets.map((t) => ({
         id: t.id,
@@ -104,7 +121,7 @@ export async function runCli(argv: string[] = process.argv): Promise<void> {
         process.exitCode = 1;
         return;
       }
-      await tm.updateTicketStatus(ticketId, statusParsed.data as any);
+      await tm.updateTicketStatus(ticketId, statusParsed.data);
       process.stdout.write(`Updated ${ticketId} -> ${newStatus}\n`);
     });
 
@@ -112,10 +129,10 @@ export async function runCli(argv: string[] = process.argv): Promise<void> {
     .command('web')
     .description('Start web UI server')
     .option('-p, --port <port>', 'Port number', '3000')
-    .action(async (options: any) => {
+    .action(async (options: WebOptions) => {
       const port = Number(options.port);
       // Dynamic import to avoid loading the web package unless needed
-  const { WebUIServer } = await import('@cmwen/min-pmt-web');
+      const { WebUIServer } = await import('@cmwen/min-pmt-web');
       const server = new WebUIServer(port);
       await server.start();
     });

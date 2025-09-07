@@ -39,15 +39,13 @@ export class WebUIServer {
           status: req.query.status,
           priority: req.query.priority,
         });
-        const tickets = await this.ticketManager.listTickets({
-          status: status as any,
-          priority: priority as any,
-        });
+        const tickets = await this.ticketManager.listTickets({ status, priority });
         res.json(tickets);
-      } catch (err: any) {
-        if (err?.issues)
-          return res.status(400).json({ error: 'Invalid query', issues: err.issues });
-        res.status(500).json({ error: err?.message || 'Internal error' });
+      } catch (err: unknown) {
+        const errorObj = err as { issues?: unknown[]; message?: string };
+        if (errorObj?.issues)
+          return res.status(400).json({ error: 'Invalid query', issues: errorObj.issues });
+        res.status(500).json({ error: errorObj?.message || 'Internal error' });
       }
     });
 
@@ -56,19 +54,22 @@ export class WebUIServer {
         const t = await this.ticketManager.getTicketById(req.params.id);
         if (!t) return res.status(404).json({ error: 'not found' });
         res.json(t);
-      } catch (err: any) {
-        res.status(500).json({ error: err?.message || 'Internal error' });
+      } catch (err: unknown) {
+        const errorObj = err as { message?: string };
+        res.status(500).json({ error: errorObj?.message || 'Internal error' });
       }
     });
 
     this._app.post('/api/tickets', async (req, res) => {
       try {
         const body = CreateTicketSchema.parse(req.body || {});
-        const created = await this.ticketManager.createTicket(body as any);
+        const created = await this.ticketManager.createTicket(body);
         res.status(201).json(created);
-      } catch (err: any) {
-        if (err?.issues) return res.status(400).json({ error: 'Invalid body', issues: err.issues });
-        res.status(500).json({ error: err?.message || 'Internal error' });
+      } catch (err: unknown) {
+        const errorObj = err as { issues?: unknown[]; message?: string };
+        if (errorObj?.issues)
+          return res.status(400).json({ error: 'Invalid body', issues: errorObj.issues });
+        res.status(500).json({ error: errorObj?.message || 'Internal error' });
       }
     });
 
@@ -76,23 +77,28 @@ export class WebUIServer {
       try {
         const id = req.params.id;
         const { status } = StatusUpdateSchema.parse(req.body || {});
-        await this.ticketManager.updateTicketStatus(id, status as any);
+        await this.ticketManager.updateTicketStatus(id, status);
         res.json({ ok: true });
-      } catch (err: any) {
-        if (err?.issues) return res.status(400).json({ error: 'Invalid body', issues: err.issues });
-        res.status(500).json({ error: err?.message || 'Internal error' });
+      } catch (err: unknown) {
+        const errorObj = err as { issues?: unknown[]; message?: string };
+        if (errorObj?.issues)
+          return res.status(400).json({ error: 'Invalid body', issues: errorObj.issues });
+        res.status(500).json({ error: errorObj?.message || 'Internal error' });
       }
     });
 
     this._app.patch('/api/tickets/:id', async (req, res) => {
       try {
         const body = UpdateTicketSchema.parse(req.body || {});
-        const updated = await this.ticketManager.updateTicketFields(req.params.id, body as any);
+        const updated = await this.ticketManager.updateTicketFields(req.params.id, body);
         res.json(updated);
-      } catch (err: any) {
-        if (err?.issues) return res.status(400).json({ error: 'Invalid body', issues: err.issues });
-        if (/not found/i.test(err?.message)) return res.status(404).json({ error: 'not found' });
-        res.status(500).json({ error: err?.message || 'Internal error' });
+      } catch (err: unknown) {
+        const errorObj = err as { issues?: unknown[]; message?: string };
+        if (errorObj?.issues)
+          return res.status(400).json({ error: 'Invalid body', issues: errorObj.issues });
+        if (/not found/i.test(errorObj?.message || ''))
+          return res.status(404).json({ error: 'not found' });
+        res.status(500).json({ error: errorObj?.message || 'Internal error' });
       }
     });
 
@@ -100,9 +106,11 @@ export class WebUIServer {
       try {
         await this.ticketManager.deleteTicket(req.params.id);
         res.status(204).send();
-      } catch (err: any) {
-        if (/not found/i.test(err?.message)) return res.status(404).json({ error: 'not found' });
-        res.status(500).json({ error: err?.message || 'Internal error' });
+      } catch (err: unknown) {
+        const errorObj = err as { message?: string };
+        if (/not found/i.test(errorObj?.message || ''))
+          return res.status(404).json({ error: 'not found' });
+        res.status(500).json({ error: errorObj?.message || 'Internal error' });
       }
     });
 
