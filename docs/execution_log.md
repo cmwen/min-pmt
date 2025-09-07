@@ -55,6 +55,22 @@
 	- WebUI tests use supertest; routes: GET/POST /api/tickets, PATCH /api/tickets/:id/status.
 	- Follow-ups: add more validation with zod; add MCP stdio harness and CLI bin wiring.
 
+## 2025-09-07 - Web UI Migration to Preact
+
+- Feature: Fixed Web UI static file serving and migrated from vanilla JS to Preact framework
+- Issue Fixed: Web UI was not working locally due to incorrect static file copying in build process
+- Framework Migration: Replaced vanilla JavaScript kanban board with modern Preact-based implementation
+- Design Decision: Updated from vanilla JS to Preact for better maintainability while keeping small bundle size
+- Build System: Configured Vite for Preact client builds alongside TypeScript server compilation
+- Features Implemented:
+  - Modern component-based architecture with App, Header, KanbanBoard, and TicketCard components  
+  - Enhanced UI styling with cards, shadows, hover effects, and improved typography
+  - Interactive ticket management (create, move between columns via click)
+  - Real-time API integration with proper error handling
+  - Loading states and responsive design
+- Tests: All existing server tests pass; client-side code uses Vite for building
+- CLI Integration: `min-pmt web` command works seamlessly with new Preact implementation
+
 ## Implemented Features
 - [Repo scaffolding] Initialized pnpm TypeScript monorepo with core package and tests. Status: Done.
 - [F1.2 Minimal Core] Implemented minimal TicketManager (create/list) with gray-matter and unit tests. Status: Done.

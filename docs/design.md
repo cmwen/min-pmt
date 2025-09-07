@@ -707,19 +707,25 @@ export default { /* config */ }
 - Default MCP server runs via stdio for CLI usage
 - WebUI server exposes MCP over HTTP/SSE for browser clients
 
-### 4. WebUI Framework: React/Vue vs. Vanilla JS
+### 4. WebUI Framework: React/Vue vs. Vanilla JS vs. Preact
 
-**[Design Decision]** **Chosen: Vanilla JavaScript (Phase 1)**
+**[Design Decision]** **Updated: Preact (Current Implementation)**
 
 **Rationale:**
-- ✅ **Simplicity**: No build step required, faster development
-- ✅ **Bundle size**: Smaller package for npx distribution
-- ✅ **Dependencies**: Fewer dependencies to manage
-- ⚖️ **Future migration**: Can migrate to React/Vue in Phase 2
+- ✅ **Maintainability**: Component-based architecture for complex interactions
+- ✅ **Bundle size**: Preact is significantly smaller than React (~3KB vs ~40KB)
+- ✅ **Developer Experience**: Modern JSX-based development with hooks
+- ✅ **State management**: Built-in state management with hooks, no external libraries needed
+- ✅ **Performance**: Virtual DOM for efficient updates
+- ✅ **Ecosystem**: Compatible with React patterns and libraries if needed
 
-**Trade-offs:**
-- ❌ **Maintainability**: More boilerplate code for complex interactions
+**Previous Choice (Phase 1): Vanilla JavaScript**
+- ❌ **Maintainability**: More boilerplate code for complex interactions  
 - ❌ **State management**: Manual state synchronization
+- ✅ **Simplicity**: No build step required, faster initial development
+- ✅ **Dependencies**: Fewer dependencies
+
+**Migration Completed:** The WebUI has been successfully migrated from vanilla JavaScript to Preact, providing a modern component-based architecture while maintaining a small bundle size and excellent performance.
 
 ## Non-functional Requirements
 

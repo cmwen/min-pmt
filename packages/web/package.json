@@ -11,8 +11,8 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc -b && cpy src/public/**/* dist/public --flat --cwd .",
-    "prepare": "tsc -b && cpy src/public/**/* dist/public --flat --cwd .",
+    "build": "tsc -b && vite build",
+    "prepare": "tsc -b && vite build",
     "test": "vitest run",
     "lint": "biome check --write src test",
     "lint:ci": "biome check src test",
@@ -21,14 +21,17 @@
   },
   "dependencies": {
     "@cmwen/min-pmt-core": "workspace:*",
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "preact": "^10.24.2"
   },
   "devDependencies": {
     "@types/express": "latest",
     "@types/supertest": "latest",
     "cpy-cli": "latest",
     "supertest": "latest",
-    "vitest": "latest"
+    "vitest": "latest",
+    "@preact/preset-vite": "^2.9.1",
+    "vite": "^6.0.7"
   },
   "publishConfig": { "access": "public" },
   "repository": {
