@@ -1,8 +1,8 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { promises as fs } from 'node:fs';
+import path from 'node:path';
 import request from 'supertest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { WebUIServer } from '../src/index.js';
-import { promises as fs } from 'fs';
-import path from 'path';
 
 const pmtDir = path.join(process.cwd(), 'pmt');
 
@@ -30,7 +30,9 @@ describe('WebUIServer API', () => {
   it('PATCH /api/tickets/:id/status updates status', async () => {
     const create = await request(server.app).post('/api/tickets').send({ title: 'Move API' });
     const id = create.body.id;
-    const patch = await request(server.app).patch(`/api/tickets/${id}/status`).send({ status: 'done' });
+    const patch = await request(server.app)
+      .patch(`/api/tickets/${id}/status`)
+      .send({ status: 'done' });
     expect(patch.status).toBe(200);
     const list = await request(server.app).get('/api/tickets');
     const found = list.body.find((t: any) => t.id === id);

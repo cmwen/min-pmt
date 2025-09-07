@@ -1,5 +1,28 @@
 # Execution Log
 
+## 2025-09-07 - Biome setup for linting and formatting
+
+- Feature: Added Biome for fast, modern linting and code formatting across the monorepo
+- Linked Backlog: [Technical debt] Code quality and consistency improvements
+- Code Changes:
+  - Installed `@biomejs/biome` as dev dependency in root workspace
+  - Created comprehensive `biome.json` configuration with TypeScript, JavaScript, and JSON formatting rules
+  - Added `.biomeignore` file to exclude build artifacts, dependencies, and generated files
+  - Added lint and format scripts to all package.json files (root and individual packages)
+  - Applied automatic formatting and fixing to all existing code
+  - Configured sensible defaults: 2-space indentation, single quotes, trailing commas, 100-char line width
+  - Set up lint rules: recommended set + custom rules for complexity, unused variables, explicit any warnings
+- Scripts added:
+  - `pnpm lint` / `pnpm lint:ci` - check and fix linting issues
+  - `pnpm format` / `pnpm format:check` - format code or check formatting
+  - Package-level scripts for targeted linting/formatting within each package
+- Tests: All builds and tests still pass after formatting changes
+- Notes [Execution → QA]:
+  - Biome provides much faster linting/formatting than ESLint + Prettier combination
+  - Configuration allows unsafe fixes for aggressive auto-fixing
+  - Some legitimate 'any' type warnings remain in CLI and web packages (expected for option parsing)
+  - Code complexity warnings in TicketManager suggest future refactoring opportunities
+
 ## 2025-09-07 - Monorepo restructuring for proper package separation
 
 - Feature: Restructured monorepo to separate CLI, MCP server, and Web UI into dedicated packages
@@ -37,6 +60,7 @@
 - [F1.2 Minimal Core] Implemented minimal TicketManager (create/list) with gray-matter and unit tests. Status: Done.
 - [F1.2 Update Status] Added TicketManager.updateTicketStatus(id, newStatus) to update frontmatter status and timestamp. Status: Done.
 - [Monorepo restructuring] Separated core, CLI, MCP, and Web into dedicated packages with proper dependencies. Status: Done.
+- [Code quality] Implemented Biome for fast linting and formatting across all packages. Status: Done.
 
 ## Code Changes & Decisions
 - Added pnpm workspace (`pnpm-workspace.yaml`) and root `package.json` with workspaces.
@@ -50,6 +74,7 @@
 - Restructured monorepo with four packages: `@min-pmt/core`, `@min-pmt/cli`, `@min-pmt/mcp`, `@min-pmt/web`
 - Each package has proper TypeScript project references and workspace dependencies
 - Moved functionality to appropriate packages while maintaining clean dependency boundaries
+- Configured Biome for consistent code style and quality across all packages
 
 ## Integration Notes
 - Use pnpm v10+ (declared via packageManager) and Node 18+.
@@ -57,9 +82,10 @@
 - CLI can be accessed via `@min-pmt/cli` package or root workspace scripts
 - Web UI can be started via CLI (`min-pmt web`) or directly via `@min-pmt/web` package
 - MCP server can be run via `@min-pmt/mcp` package for Model Context Protocol integration
+- Use `pnpm lint` and `pnpm format` for code quality maintenance
 
 ## Technical Debt
-- Consider adding ESLint/Prettier configuration across packages for consistent code style
+- Consider addressing complexity warnings in TicketManager methods (refactor large functions)
 - Add integration tests that test cross-package functionality
 - Consider adding package for shared types/utilities if needed in the future
 
@@ -70,6 +96,7 @@
 - Edge cases: malformed frontmatter, missing fields, large directories, concurrent writes.
 - Additional: verify file path remains unchanged during status update (organizational only) and that updated timestamp changes.
 - Cross-package integration tests to ensure CLI, Web, and MCP packages work correctly with core
+- Code quality: run `pnpm lint:ci` in CI to ensure consistent formatting and catch linting issues
 
 ---
 *Created by Execution Agent | Links: [Design](design.md) → [QA Plan](qa_plan.md)*

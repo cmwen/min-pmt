@@ -1,7 +1,7 @@
-import { promises as fs } from 'fs';
-import path from 'path';
+import { promises as fs } from 'node:fs';
+import path from 'node:path';
 import matter from 'gray-matter';
-import { Ticket, TicketStatus, defaultConfig, ProjectConfig } from './types.js';
+import { defaultConfig, type ProjectConfig, type Ticket, type TicketStatus } from './types.js';
 
 export class TicketManager {
   constructor(private config: ProjectConfig = defaultConfig) {}
@@ -59,7 +59,10 @@ export class TicketManager {
     return { ...data, filePath, content } as Ticket;
   }
 
-  async listTickets(filters?: { status?: TicketStatus; priority?: Ticket['priority'] }): Promise<Ticket[]> {
+  async listTickets(filters?: {
+    status?: TicketStatus;
+    priority?: Ticket['priority'];
+  }): Promise<Ticket[]> {
     await this.ensureInitialized();
     const dir = this.pmtDir();
     const files = await this.findMarkdownFiles(dir);
@@ -139,7 +142,12 @@ export class TicketManager {
     return undefined;
   }
 
-  async updateTicketFields(ticketId: string, fields: Partial<Pick<Ticket, 'title' | 'description' | 'status' | 'priority' | 'labels' | 'assignee' | 'due'>>): Promise<Ticket> {
+  async updateTicketFields(
+    ticketId: string,
+    fields: Partial<
+      Pick<Ticket, 'title' | 'description' | 'status' | 'priority' | 'labels' | 'assignee' | 'due'>
+    >
+  ): Promise<Ticket> {
     await this.ensureInitialized();
     const files = await this.findMarkdownFiles(this.pmtDir());
     for (const filePath of files) {

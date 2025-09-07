@@ -1,13 +1,16 @@
 #!/usr/bin/env node
+import {
+  ConfigLoader,
+  CreateTicketSchema,
+  ListTicketsQuerySchema,
+  TicketManager,
+  TicketStatusSchema,
+} from '@min-pmt/core';
 import { Command } from 'commander';
-import { TicketManager, ConfigLoader, CreateTicketSchema, ListTicketsQuerySchema, TicketStatusSchema } from '@min-pmt/core';
 
 export async function runCli(argv: string[] = process.argv): Promise<void> {
   const program = new Command();
-  program
-    .name('min-pmt')
-    .description('Minimal Project Management Tool')
-    .version('0.1.0');
+  program.name('min-pmt').description('Minimal Project Management Tool').version('0.1.0');
 
   program
     .command('init')
@@ -30,8 +33,19 @@ export async function runCli(argv: string[] = process.argv): Promise<void> {
     .action(async (title: string, options: any) => {
       const cfg = await ConfigLoader.load();
       const tm = new TicketManager(cfg);
-      const labels = options.labels ? String(options.labels).split(',').map((s: string) => s.trim()).filter(Boolean) : undefined;
-      const parsed = CreateTicketSchema.pick({ title: true, description: true, priority: true, labels: true, status: true }).safeParse({
+      const labels = options.labels
+        ? String(options.labels)
+            .split(',')
+            .map((s: string) => s.trim())
+            .filter(Boolean)
+        : undefined;
+      const parsed = CreateTicketSchema.pick({
+        title: true,
+        description: true,
+        priority: true,
+        labels: true,
+        status: true,
+      }).safeParse({
         title,
         description: options.description,
         priority: options.priority,
@@ -40,7 +54,7 @@ export async function runCli(argv: string[] = process.argv): Promise<void> {
       });
       if (!parsed.success) {
         process.stderr.write('Invalid options for add.\n');
-        process.stderr.write(JSON.stringify(parsed.error.issues, null, 2) + '\n');
+        process.stderr.write(`${JSON.stringify(parsed.error.issues, null, 2)}\n`);
         process.exitCode = 1;
         return;
       }
@@ -57,16 +71,24 @@ export async function runCli(argv: string[] = process.argv): Promise<void> {
     .action(async (options: any) => {
       const cfg = await ConfigLoader.load();
       const tm = new TicketManager(cfg);
-      const q = ListTicketsQuerySchema.safeParse({ status: options.status, priority: options.priority });
+      const q = ListTicketsQuerySchema.safeParse({
+        status: options.status,
+        priority: options.priority,
+      });
       if (!q.success) {
         process.stderr.write('Invalid list filters.\n');
-        process.stderr.write(JSON.stringify(q.error.issues, null, 2) + '\n');
+        process.stderr.write(`${JSON.stringify(q.error.issues, null, 2)}\n`);
         process.exitCode = 1;
         return;
       }
       const tickets = await tm.listTickets(q.data as any);
       // Simple table
-      const rows = tickets.map(t => ({ id: t.id, title: t.title, status: t.status, priority: t.priority }));
+      const rows = tickets.map((t) => ({
+        id: t.id,
+        title: t.title,
+        status: t.status,
+        priority: t.priority,
+      }));
       console.table(rows);
     });
 

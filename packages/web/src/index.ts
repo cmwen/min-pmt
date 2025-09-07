@@ -1,7 +1,14 @@
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import {
+  ConfigLoader,
+  CreateTicketSchema,
+  ListTicketsQuerySchema,
+  StatusUpdateSchema,
+  TicketManager,
+  UpdateTicketSchema,
+} from '@min-pmt/core';
 import express from 'express';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { TicketManager, ConfigLoader, CreateTicketSchema, ListTicketsQuerySchema, StatusUpdateSchema, UpdateTicketSchema } from '@min-pmt/core';
 
 export class WebUIServer {
   private _app: express.Application;
@@ -38,7 +45,8 @@ export class WebUIServer {
         });
         res.json(tickets);
       } catch (err: any) {
-        if (err?.issues) return res.status(400).json({ error: 'Invalid query', issues: err.issues });
+        if (err?.issues)
+          return res.status(400).json({ error: 'Invalid query', issues: err.issues });
         res.status(500).json({ error: err?.message || 'Internal error' });
       }
     });
@@ -53,36 +61,36 @@ export class WebUIServer {
       }
     });
 
-  this._app.post('/api/tickets', async (req, res) => {
+    this._app.post('/api/tickets', async (req, res) => {
       try {
-    const body = CreateTicketSchema.parse(req.body || {});
-    const created = await this.ticketManager.createTicket(body as any);
+        const body = CreateTicketSchema.parse(req.body || {});
+        const created = await this.ticketManager.createTicket(body as any);
         res.status(201).json(created);
       } catch (err: any) {
-    if (err?.issues) return res.status(400).json({ error: 'Invalid body', issues: err.issues });
+        if (err?.issues) return res.status(400).json({ error: 'Invalid body', issues: err.issues });
         res.status(500).json({ error: err?.message || 'Internal error' });
       }
     });
 
-  this._app.patch('/api/tickets/:id/status', async (req, res) => {
+    this._app.patch('/api/tickets/:id/status', async (req, res) => {
       try {
         const id = req.params.id;
-    const { status } = StatusUpdateSchema.parse(req.body || {});
-    await this.ticketManager.updateTicketStatus(id, status as any);
+        const { status } = StatusUpdateSchema.parse(req.body || {});
+        await this.ticketManager.updateTicketStatus(id, status as any);
         res.json({ ok: true });
       } catch (err: any) {
-    if (err?.issues) return res.status(400).json({ error: 'Invalid body', issues: err.issues });
+        if (err?.issues) return res.status(400).json({ error: 'Invalid body', issues: err.issues });
         res.status(500).json({ error: err?.message || 'Internal error' });
       }
     });
 
-  this._app.patch('/api/tickets/:id', async (req, res) => {
+    this._app.patch('/api/tickets/:id', async (req, res) => {
       try {
-    const body = UpdateTicketSchema.parse(req.body || {});
-    const updated = await this.ticketManager.updateTicketFields(req.params.id, body as any);
+        const body = UpdateTicketSchema.parse(req.body || {});
+        const updated = await this.ticketManager.updateTicketFields(req.params.id, body as any);
         res.json(updated);
       } catch (err: any) {
-    if (err?.issues) return res.status(400).json({ error: 'Invalid body', issues: err.issues });
+        if (err?.issues) return res.status(400).json({ error: 'Invalid body', issues: err.issues });
         if (/not found/i.test(err?.message)) return res.status(404).json({ error: 'not found' });
         res.status(500).json({ error: err?.message || 'Internal error' });
       }
@@ -100,7 +108,7 @@ export class WebUIServer {
 
     // Serve SPA index for other routes
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
-    this._app.get('*', (req, res) => {
+    this._app.get('*', (_req, res) => {
       res.sendFile(path.join(__dirname, 'public', 'index.html'));
     });
   }

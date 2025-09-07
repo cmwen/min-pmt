@@ -1,6 +1,6 @@
-import { promises as fs } from 'fs';
-import path from 'path';
-import { ProjectConfig, defaultConfig } from './types.js';
+import { promises as fs } from 'node:fs';
+import path from 'node:path';
+import { defaultConfig, type ProjectConfig } from './types.js';
 
 /**
  * Minimal configuration loader with JS preferred, JSON fallback.
@@ -24,8 +24,14 @@ export class ConfigLoader {
     return defaultConfig;
   }
 
-  static async initialize(options?: { folder?: string }, cwd: string = process.cwd()): Promise<ProjectConfig> {
-    const cfg: ProjectConfig = { ...defaultConfig, ...(options?.folder ? { folder: options.folder } : {}) };
+  static async initialize(
+    options?: { folder?: string },
+    cwd: string = process.cwd()
+  ): Promise<ProjectConfig> {
+    const cfg: ProjectConfig = {
+      ...defaultConfig,
+      ...(options?.folder ? { folder: options.folder } : {}),
+    };
     const jsPath = path.join(cwd, 'min-pmt.config.js');
     const content = `export default ${JSON.stringify(cfg, null, 2)}\n`;
     await fs.writeFile(jsPath, content, 'utf8');

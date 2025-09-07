@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { promises as fs } from 'node:fs';
+import path from 'node:path';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { TicketManager } from '../src/TicketManager.js';
-import { promises as fs } from 'fs';
-import path from 'path';
 
 const tmpDir = path.join(process.cwd(), 'pmt');
 
@@ -29,7 +29,7 @@ describe('TicketManager', () => {
     await manager.createTicket({ title: 'A', status: 'todo' });
     await manager.createTicket({ title: 'B', status: 'done' });
     const todos = await manager.listTickets({ status: 'todo' });
-    expect(todos.every(t => t.status === 'todo')).toBe(true);
+    expect(todos.every((t) => t.status === 'todo')).toBe(true);
   });
 
   it('updates ticket status by id', async () => {
@@ -43,6 +43,8 @@ describe('TicketManager', () => {
   it('throws on unknown ticket id', async () => {
     const manager = new TicketManager();
     await manager.createTicket({ title: 'Only one' });
-    await expect(manager.updateTicketStatus('ticket-does-not-exist', 'done')).rejects.toThrow(/not found/i);
+    await expect(manager.updateTicketStatus('ticket-does-not-exist', 'done')).rejects.toThrow(
+      /not found/i
+    );
   });
 });

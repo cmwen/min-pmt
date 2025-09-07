@@ -14,19 +14,23 @@
   "scripts": {
     "build": "pnpm -r build",
     "test": "pnpm -r test",
-    "lint": "echo \"(no linter configured)\"",
+    "lint": "biome check --write .",
+    "lint:ci": "biome check .",
+    "format": "biome format --write .",
+    "format:check": "biome format .",
     "clean": "git clean -Xdf && rm -rf packages/**/dist"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.2.3",
+    "@types/express": "latest",
     "@types/node": "latest",
-  "@types/express": "latest",
-  "@types/supertest": "latest",
-  "cpy-cli": "latest",
+    "@types/supertest": "latest",
+    "cpy-cli": "latest",
+    "supertest": "latest",
     "typescript": "latest",
-  "vitest": "latest",
-  "supertest": "latest"
+    "vitest": "latest"
   },
   "dependencies": {
-  "gray-matter": "^4.0.3"
+    "gray-matter": "^4.0.3"
   }
 }
