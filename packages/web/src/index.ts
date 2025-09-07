@@ -81,7 +81,8 @@ export class WebUIServer {
         res.json({ ok: true });
       } catch (err: unknown) {
         const errorObj = err as { issues?: unknown[]; message?: string };
-        if (errorObj?.issues) return res.status(400).json({ error: 'Invalid body', issues: errorObj.issues });
+        if (errorObj?.issues)
+          return res.status(400).json({ error: 'Invalid body', issues: errorObj.issues });
         res.status(500).json({ error: errorObj?.message || 'Internal error' });
       }
     });
@@ -93,8 +94,10 @@ export class WebUIServer {
         res.json(updated);
       } catch (err: unknown) {
         const errorObj = err as { issues?: unknown[]; message?: string };
-        if (errorObj?.issues) return res.status(400).json({ error: 'Invalid body', issues: errorObj.issues });
-        if (/not found/i.test(errorObj?.message || '')) return res.status(404).json({ error: 'not found' });
+        if (errorObj?.issues)
+          return res.status(400).json({ error: 'Invalid body', issues: errorObj.issues });
+        if (/not found/i.test(errorObj?.message || ''))
+          return res.status(404).json({ error: 'not found' });
         res.status(500).json({ error: errorObj?.message || 'Internal error' });
       }
     });
@@ -105,7 +108,8 @@ export class WebUIServer {
         res.status(204).send();
       } catch (err: unknown) {
         const errorObj = err as { message?: string };
-        if (/not found/i.test(errorObj?.message || '')) return res.status(404).json({ error: 'not found' });
+        if (/not found/i.test(errorObj?.message || ''))
+          return res.status(404).json({ error: 'not found' });
         res.status(500).json({ error: errorObj?.message || 'Internal error' });
       }
     });
