@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>min-pmt</title>
+    <style>
+      body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 0; }
+      header { display:flex; align-items:center; justify-content:space-between; padding: 12px 16px; background:#111; color:#fff; }
+      .kanban { display:flex; gap:16px; padding:16px; }
+      .col { flex:1; background:#f5f5f5; border-radius:8px; padding:8px; min-height: 300px; }
+      .card { background:#fff; border:1px solid #e5e5e5; border-radius:6px; padding:8px; margin:8px 0; }
+      h3 { margin: 6px 0; font-size: 14px; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>📋 min-pmt</h1>
+      <button id="addBtn">+ Add Ticket</button>
+    </header>
+    <main>
+      <div class="kanban">
+        <div class="col" data-status="todo">
+          <h2>Todo</h2>
+          <div class="list" id="todo"></div>
+        </div>
+        <div class="col" data-status="in-progress">
+          <h2>In Progress</h2>
+          <div class="list" id="in-progress"></div>
+        </div>
+        <div class="col" data-status="done">
+          <h2>Done</h2>
+          <div class="list" id="done"></div>
+        </div>
+      </div>
+    </main>
+    <script src="/js/kanban.js"></script>
+  </body>
+</html>

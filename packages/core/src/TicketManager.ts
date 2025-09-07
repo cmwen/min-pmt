@@ -111,6 +111,72 @@ export class TicketManager {
     throw new Error(`Ticket not found: ${ticketId}`);
   }
 
+  async getTicketById(ticketId: string): Promise<Ticket | undefined> {
+    await this.ensureInitialized();
+    const files = await this.findMarkdownFiles(this.pmtDir());
+    for (const filePath of files) {
+      const raw = await fs.readFile(filePath, 'utf8');
+      const parsed = matter(raw);
+      const id = parsed.data?.id ? String(parsed.data.id) : undefined;
+      if (id === ticketId) {
+        const t: Ticket = {
+          id,
+          title: String(parsed.data.title),
+          description: parsed.data.description ? String(parsed.data.description) : undefined,
+          status: (parsed.data.status as TicketStatus) ?? 'todo',
+          priority: parsed.data.priority as Ticket['priority'],
+          labels: Array.isArray(parsed.data.labels) ? parsed.data.labels.map(String) : undefined,
+          assignee: parsed.data.assignee ? String(parsed.data.assignee) : undefined,
+          created: parsed.data.created ? String(parsed.data.created) : new Date().toISOString(),
+          updated: parsed.data.updated ? String(parsed.data.updated) : new Date().toISOString(),
+          due: parsed.data.due ? String(parsed.data.due) : undefined,
+          filePath,
+          content: raw,
+        };
+        return t;
+      }
+    }
+    return undefined;
+  }
+
+  async updateTicketFields(ticketId: string, fields: Partial<Pick<Ticket, 'title' | 'description' | 'status' | 'priority' | 'labels' | 'assignee' | 'due'>>): Promise<Ticket> {
+    await this.ensureInitialized();
+    const files = await this.findMarkdownFiles(this.pmtDir());
+    for (const filePath of files) {
+      const raw = await fs.readFile(filePath, 'utf8');
+      const parsed = matter(raw);
+      const id = parsed.data?.id ? String(parsed.data.id) : undefined;
+      if (id !== ticketId) continue;
+      parsed.data = parsed.data || {};
+      for (const [k, v] of Object.entries(fields)) {
+        // undefined means do not change
+        if (v !== undefined) (parsed.data as any)[k] = v;
+      }
+      parsed.data.updated = new Date().toISOString();
+      const nextContent = matter.stringify(parsed.content, parsed.data);
+      await fs.writeFile(filePath, nextContent, 'utf8');
+      const updated = await this.getTicketById(ticketId);
+      if (!updated) throw new Error('unexpected: ticket missing after update');
+      return updated;
+    }
+    throw new Error(`Ticket not found: ${ticketId}`);
+  }
+
+  async deleteTicket(ticketId: string): Promise<void> {
+    await this.ensureInitialized();
+    const files = await this.findMarkdownFiles(this.pmtDir());
+    for (const filePath of files) {
+      const raw = await fs.readFile(filePath, 'utf8');
+      const parsed = matter(raw);
+      const id = parsed.data?.id ? String(parsed.data.id) : undefined;
+      if (id === ticketId) {
+        await fs.unlink(filePath);
+        return;
+      }
+    }
+    throw new Error(`Ticket not found: ${ticketId}`);
+  }
+
   private async generateId(title: string): Promise<string> {
     // simple slug + timestamp
     const slug = title

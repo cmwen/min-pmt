@@ -1,0 +1,28 @@
+{
+  "name": "@min-pmt/web",
+  "version": "0.1.0",
+  "description": "Minimal Project Management Tool Web UI",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "min-pmt-web": "dist/server.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -b && cpy src/public/**/* dist/public --flat --cwd .",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@min-pmt/core": "workspace:*",
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "@types/express": "latest",
+    "@types/supertest": "latest",
+    "cpy-cli": "latest",
+    "supertest": "latest",
+    "vitest": "latest"
+  }
+}

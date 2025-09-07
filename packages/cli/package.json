@@ -1,0 +1,24 @@
+{
+  "name": "@min-pmt/cli",
+  "version": "0.1.0",
+  "description": "Minimal Project Management Tool CLI",
+  "type": "module",
+  "bin": {
+    "min-pmt": "dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@min-pmt/core": "workspace:*",
+    "@min-pmt/web": "workspace:*",
+    "commander": "^12.1.0"
+  },
+  "devDependencies": {
+    "vitest": "latest"
+  }
+}
