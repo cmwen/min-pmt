@@ -11,8 +11,8 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc -b && cpy src/public/**/* dist/public --flat --cwd .",
-    "prepare": "tsc -b && cpy src/public/**/* dist/public --flat --cwd .",
+    "build": "tsc -b && cpy 'src/public/**' 'dist/public' --cwd=. --parents",
+    "prepare": "tsc -b && cpy 'src/public/**' 'dist/public' --cwd=. --parents",
     "test": "vitest run",
     "lint": "biome check --write src test",
     "lint:ci": "biome check src test",
