@@ -1,5 +1,5 @@
 {
-  "name": "@min-pmt/core",
+  "name": "@cmwen/min-pmt-core",
   "version": "0.1.0",
   "type": "module",
   "main": "dist/index.js",
@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "build": "tsc -b",
+    "prepare": "tsc -b",
     "test": "vitest run",
     "lint": "biome check --write src test",
     "lint:ci": "biome check src test",
@@ -18,5 +19,13 @@
   "dependencies": {
     "gray-matter": "^4.0.3",
     "zod": "^3.23.8"
-  }
+  },
+  "publishConfig": { "access": "public" },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cmwen/min-pmt.git",
+    "directory": "packages/core"
+  },
+  "license": "MIT",
+  "author": "cmwen"
 }

@@ -7,7 +7,7 @@ import {
   StatusUpdateSchema,
   TicketManager,
   UpdateTicketSchema,
-} from '@min-pmt/core';
+} from '@cmwen/min-pmt-core';
 import express from 'express';
 
 export class WebUIServer {

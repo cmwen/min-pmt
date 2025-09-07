@@ -5,7 +5,7 @@ import {
   ListTicketsQuerySchema,
   TicketManager,
   TicketStatusSchema,
-} from '@min-pmt/core';
+} from '@cmwen/min-pmt-core';
 import { Command } from 'commander';
 
 export async function runCli(argv: string[] = process.argv): Promise<void> {
@@ -115,7 +115,7 @@ export async function runCli(argv: string[] = process.argv): Promise<void> {
     .action(async (options: any) => {
       const port = Number(options.port);
       // Dynamic import to avoid loading the web package unless needed
-      const { WebUIServer } = await import('@min-pmt/web');
+  const { WebUIServer } = await import('@cmwen/min-pmt-web');
       const server = new WebUIServer(port);
       await server.start();
     });

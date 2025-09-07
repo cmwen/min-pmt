@@ -1,5 +1,5 @@
 {
-  "name": "@min-pmt/cli",
+  "name": "@cmwen/min-pmt",
   "version": "0.1.0",
   "description": "Minimal Project Management Tool CLI",
   "type": "module",
@@ -11,6 +11,7 @@
   ],
   "scripts": {
     "build": "tsc -b",
+    "prepare": "tsc -b",
     "test": "vitest run",
     "lint": "biome check --write src test",
     "lint:ci": "biome check src test",
@@ -18,11 +19,21 @@
     "format:check": "biome format src test"
   },
   "dependencies": {
-    "@min-pmt/core": "workspace:*",
-    "@min-pmt/web": "workspace:*",
+    "@cmwen/min-pmt-core": "workspace:*",
+    "@cmwen/min-pmt-web": "workspace:*",
     "commander": "^12.1.0"
   },
   "devDependencies": {
     "vitest": "latest"
-  }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cmwen/min-pmt.git",
+    "directory": "packages/cli"
+  },
+  "license": "MIT",
+  "author": "cmwen"
 }

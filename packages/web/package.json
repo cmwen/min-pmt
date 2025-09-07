@@ -1,5 +1,5 @@
 {
-  "name": "@min-pmt/web",
+  "name": "@cmwen/min-pmt-web",
   "version": "0.1.0",
   "description": "Minimal Project Management Tool Web UI",
   "type": "module",
@@ -12,6 +12,7 @@
   ],
   "scripts": {
     "build": "tsc -b && cpy src/public/**/* dist/public --flat --cwd .",
+    "prepare": "tsc -b && cpy src/public/**/* dist/public --flat --cwd .",
     "test": "vitest run",
     "lint": "biome check --write src test",
     "lint:ci": "biome check src test",
@@ -19,7 +20,7 @@
     "format:check": "biome format src test"
   },
   "dependencies": {
-    "@min-pmt/core": "workspace:*",
+    "@cmwen/min-pmt-core": "workspace:*",
     "express": "^4.19.2"
   },
   "devDependencies": {
@@ -28,5 +29,13 @@
     "cpy-cli": "latest",
     "supertest": "latest",
     "vitest": "latest"
-  }
+  },
+  "publishConfig": { "access": "public" },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cmwen/min-pmt.git",
+    "directory": "packages/web"
+  },
+  "license": "MIT",
+  "author": "cmwen"
 }

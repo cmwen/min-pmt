@@ -3,7 +3,8 @@ import path from 'node:path';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { TicketManager } from '../src/TicketManager.js';
 
-const tmpDir = path.join(process.cwd(), 'pmt');
+const folder = 'pmt-core-tests';
+const tmpDir = path.join(process.cwd(), folder);
 
 describe('TicketManager', () => {
   beforeEach(async () => {
@@ -12,7 +13,7 @@ describe('TicketManager', () => {
   });
 
   it('creates a ticket with frontmatter and lists it', async () => {
-    const manager = new TicketManager();
+  const manager = new TicketManager({ folder });
     const created = await manager.createTicket({ title: 'Test Ticket', priority: 'high' });
     expect(created.id).toMatch(/^ticket-/);
     expect(created.status).toBe('todo');
@@ -25,7 +26,7 @@ describe('TicketManager', () => {
   });
 
   it('filters by status', async () => {
-    const manager = new TicketManager();
+  const manager = new TicketManager({ folder });
     await manager.createTicket({ title: 'A', status: 'todo' });
     await manager.createTicket({ title: 'B', status: 'done' });
     const todos = await manager.listTickets({ status: 'todo' });
@@ -33,7 +34,7 @@ describe('TicketManager', () => {
   });
 
   it('updates ticket status by id', async () => {
-    const manager = new TicketManager();
+  const manager = new TicketManager({ folder });
     const created = await manager.createTicket({ title: 'Move me', status: 'todo' });
     await manager.updateTicketStatus(created.id, 'in-progress');
     const list = await manager.listTickets();
@@ -41,7 +42,7 @@ describe('TicketManager', () => {
   });
 
   it('throws on unknown ticket id', async () => {
-    const manager = new TicketManager();
+  const manager = new TicketManager({ folder });
     await manager.createTicket({ title: 'Only one' });
     await expect(manager.updateTicketStatus('ticket-does-not-exist', 'done')).rejects.toThrow(
       /not found/i

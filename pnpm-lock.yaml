@@ -39,10 +39,10 @@ importers:
 
   packages/cli:
     dependencies:
-      '@min-pmt/core':
+      '@cmwen/min-pmt-core':
         specifier: workspace:*
         version: link:../core
-      '@min-pmt/web':
+      '@cmwen/min-pmt-web':
         specifier: workspace:*
         version: link:../web
       commander:
@@ -64,7 +64,7 @@ importers:
 
   packages/mcp:
     dependencies:
-      '@min-pmt/core':
+      '@cmwen/min-pmt-core':
         specifier: workspace:*
         version: link:../core
       '@modelcontextprotocol/sdk':
@@ -80,7 +80,7 @@ importers:
 
   packages/web:
     dependencies:
-      '@min-pmt/core':
+      '@cmwen/min-pmt-core':
         specifier: workspace:*
         version: link:../core
       express:
