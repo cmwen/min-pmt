@@ -1,0 +1,28 @@
+{
+  "name": "min-pmt",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Minimal Project Management Tool - monorepo",
+  "packageManager": "pnpm@10.15.1",
+  "engines": {
+    "node": ">=18.18",
+    "pnpm": ">=9"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "lint": "echo \"(no linter configured)\"",
+    "clean": "git clean -Xdf && rm -rf packages/**/dist"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "typescript": "latest",
+    "vitest": "latest"
+  },
+  "dependencies": {
+    "gray-matter": "^4.0.3"
+  }
+}
