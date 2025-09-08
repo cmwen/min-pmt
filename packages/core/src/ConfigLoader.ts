@@ -38,20 +38,6 @@ export async function initializeConfig(
   return cfg;
 }
 
-// Keep the static class for backward compatibility
-export class ConfigLoader {
-  static async load(cwd: string = process.cwd()): Promise<ProjectConfig> {
-    return loadConfig(cwd);
-  }
-
-  static async initialize(
-    options?: { folder?: string },
-    cwd: string = process.cwd()
-  ): Promise<ProjectConfig> {
-    return initializeConfig(options, cwd);
-  }
-}
-
 function pathToFileUrl(p: string): string {
   const u = new URL('file://');
   // Ensure absolute path

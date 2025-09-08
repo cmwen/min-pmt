@@ -102,7 +102,12 @@ export class MinPmtMcpServer {
       async (args) => {
         const p = GetSchema.parse(args);
         const t = await this.manager.getTicketById(p.ticketId);
-        if (!t) return { content: [{ type: 'text', text: 'not found' }], isError: true } as any;
+        if (!t) {
+          return {
+            content: [{ type: 'text', text: 'not found' }],
+            isError: true,
+          };
+        }
         return { content: [{ type: 'text', text: JSON.stringify(t) }] };
       }
     );
@@ -122,7 +127,10 @@ export class MinPmtMcpServer {
       },
       async (args) => {
         const p = UpdateSchema.parse(args);
-        const t = await this.manager.updateTicketFields(p.ticketId, p.fields as any);
+        const t = await this.manager.updateTicketFields(
+          p.ticketId,
+          p.fields as Record<string, unknown>
+        );
         return { content: [{ type: 'text', text: JSON.stringify(t) }] };
       }
     );

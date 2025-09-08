@@ -72,23 +72,12 @@ export class TicketManager {
       const parsed = matter(raw);
       // minimal validation
       if (!parsed.data || !parsed.data.id || !parsed.data.title) continue;
-      const t: Ticket = {
-        id: String(parsed.data.id),
-        title: String(parsed.data.title),
-        description: parsed.data.description ? String(parsed.data.description) : undefined,
-        status: (parsed.data.status as TicketStatus) ?? 'todo',
-        priority: parsed.data.priority as Ticket['priority'],
-        labels: Array.isArray(parsed.data.labels) ? parsed.data.labels.map(String) : undefined,
-        assignee: parsed.data.assignee ? String(parsed.data.assignee) : undefined,
-        created: parsed.data.created ? String(parsed.data.created) : new Date().toISOString(),
-        updated: parsed.data.updated ? String(parsed.data.updated) : new Date().toISOString(),
-        due: parsed.data.due ? String(parsed.data.due) : undefined,
-        filePath,
-        content: raw,
-      };
-      if (filters?.status && t.status !== filters.status) continue;
-      if (filters?.priority && t.priority !== filters.priority) continue;
-      tickets.push(t);
+
+      const ticket = this.parseTicketFromMatter(parsed, filePath, raw);
+
+      if (filters?.status && ticket.status !== filters.status) continue;
+      if (filters?.priority && ticket.priority !== filters.priority) continue;
+      tickets.push(ticket);
     }
     return tickets;
   }
@@ -122,21 +111,7 @@ export class TicketManager {
       const parsed = matter(raw);
       const id = parsed.data?.id ? String(parsed.data.id) : undefined;
       if (id === ticketId) {
-        const t: Ticket = {
-          id,
-          title: String(parsed.data.title),
-          description: parsed.data.description ? String(parsed.data.description) : undefined,
-          status: (parsed.data.status as TicketStatus) ?? 'todo',
-          priority: parsed.data.priority as Ticket['priority'],
-          labels: Array.isArray(parsed.data.labels) ? parsed.data.labels.map(String) : undefined,
-          assignee: parsed.data.assignee ? String(parsed.data.assignee) : undefined,
-          created: parsed.data.created ? String(parsed.data.created) : new Date().toISOString(),
-          updated: parsed.data.updated ? String(parsed.data.updated) : new Date().toISOString(),
-          due: parsed.data.due ? String(parsed.data.due) : undefined,
-          filePath,
-          content: raw,
-        };
-        return t;
+        return this.parseTicketFromMatter(parsed, filePath, raw);
       }
     }
     return undefined;
@@ -158,7 +133,9 @@ export class TicketManager {
       parsed.data = parsed.data || {};
       for (const [k, v] of Object.entries(fields)) {
         // undefined means do not change
-        if (v !== undefined) (parsed.data as any)[k] = v;
+        if (v !== undefined) {
+          (parsed.data as Record<string, unknown>)[k] = v;
+        }
       }
       parsed.data.updated = new Date().toISOString();
       const nextContent = matter.stringify(parsed.content, parsed.data);
@@ -194,6 +171,27 @@ export class TicketManager {
       .slice(0, 32);
     const ts = Date.now().toString(36);
     return `ticket-${slug || 'item'}-${ts}`;
+  }
+
+  private parseTicketFromMatter(
+    parsed: matter.GrayMatterFile<string>,
+    filePath: string,
+    raw: string
+  ): Ticket {
+    return {
+      id: String(parsed.data.id),
+      title: String(parsed.data.title),
+      description: parsed.data.description ? String(parsed.data.description) : undefined,
+      status: (parsed.data.status as TicketStatus) ?? 'todo',
+      priority: parsed.data.priority as Ticket['priority'],
+      labels: Array.isArray(parsed.data.labels) ? parsed.data.labels.map(String) : undefined,
+      assignee: parsed.data.assignee ? String(parsed.data.assignee) : undefined,
+      created: parsed.data.created ? String(parsed.data.created) : new Date().toISOString(),
+      updated: parsed.data.updated ? String(parsed.data.updated) : new Date().toISOString(),
+      due: parsed.data.due ? String(parsed.data.due) : undefined,
+      filePath,
+      content: raw,
+    };
   }
 
   private async findMarkdownFiles(dir: string): Promise<string[]> {
