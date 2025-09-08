@@ -1,10 +1,10 @@
 ---
-id: ticket-bad-status-mfb1sihy
-title: Bad Status
+id: ticket-movable-mfb2lspy
+title: Movable
 description: ''
-status: todo
-created: '2025-09-08T11:38:03.046Z'
-updated: '2025-09-08T11:38:03.046Z'
+status: done
+created: '2025-09-08T12:00:49.318Z'
+updated: '2025-09-08T12:00:49.319Z'
 ---
 
 ## Description

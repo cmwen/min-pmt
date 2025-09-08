@@ -39,7 +39,12 @@ export function KanbanBoard({ tickets, onUpdateStatus, onViewTicket }: KanbanBoa
                 </output>
               ) : (
                 items.map((ticket) => (
-                  <TicketCard key={ticket.id} ticket={ticket} onUpdateStatus={onUpdateStatus} onViewTicket={onViewTicket} />
+                  <TicketCard
+                    key={ticket.id}
+                    ticket={ticket}
+                    onUpdateStatus={onUpdateStatus}
+                    onViewTicket={onViewTicket}
+                  />
                 ))
               )}
             </Column>

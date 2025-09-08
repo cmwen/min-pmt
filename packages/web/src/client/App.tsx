@@ -1,3 +1,4 @@
+import type { ProjectConfig } from '@cmwen/min-pmt-core';
 import { useCallback, useEffect, useMemo, useState } from 'preact/hooks';
 import { Header } from './components/Header';
 import { KanbanBoard } from './components/KanbanBoard';
@@ -27,7 +28,7 @@ export function App() {
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [config, setConfig] = useState<any>(null);
+  const [config, setConfig] = useState<ProjectConfig | null>(null);
 
   const showToast = useCallback(
     (message: string, type: ToastMessage['type'] = 'info', duration?: number) => {
@@ -96,23 +97,23 @@ export function App() {
     try {
       // Include default description from template if available
       const description = config?.template?.content || '';
-      
+
       const response = await fetch('/api/tickets', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          title, 
+        body: JSON.stringify({
+          title,
           priority,
-          description: description || undefined  // Only include if not empty
+          description: description || undefined, // Only include if not empty
         }),
       });
       if (!response.ok) throw new Error('Failed to create ticket');
-      
+
       const newTicket = await response.json();
-      
+
       // Optimistically update the tickets list
-      setTickets(prevTickets => [...prevTickets, newTicket]);
-      
+      setTickets((prevTickets) => [...prevTickets, newTicket]);
+
       showToast(`Ticket "${title}" created successfully!`, 'success');
     } catch (error) {
       console.error('Error creating ticket:', error);
@@ -125,9 +126,9 @@ export function App() {
   const updateTicketStatus = async (ticketId: string, newStatus: Ticket['status']) => {
     try {
       // Optimistically update the ticket status
-      setTickets(prevTickets => 
-        prevTickets.map(ticket => 
-          ticket.id === ticketId 
+      setTickets((prevTickets) =>
+        prevTickets.map((ticket) =>
+          ticket.id === ticketId
             ? { ...ticket, status: newStatus, updated: new Date().toISOString() }
             : ticket
         )
@@ -139,7 +140,7 @@ export function App() {
         body: JSON.stringify({ status: newStatus }),
       });
       if (!response.ok) throw new Error('Failed to update ticket');
-      
+
       showToast(`Ticket moved to ${newStatus.replace('-', ' ')}!`, 'success');
     } catch (error) {
       console.error('Error updating ticket:', error);
@@ -162,9 +163,9 @@ export function App() {
   const updateTicket = async (ticketId: string, fields: Partial<Ticket>) => {
     try {
       // Optimistically update the ticket
-      setTickets(prevTickets => 
-        prevTickets.map(ticket => 
-          ticket.id === ticketId 
+      setTickets((prevTickets) =>
+        prevTickets.map((ticket) =>
+          ticket.id === ticketId
             ? { ...ticket, ...fields, updated: new Date().toISOString() }
             : ticket
         )
@@ -172,7 +173,9 @@ export function App() {
 
       // Update the selected ticket for the modal
       if (selectedTicket && selectedTicket.id === ticketId) {
-        setSelectedTicket(prev => prev ? { ...prev, ...fields, updated: new Date().toISOString() } : null);
+        setSelectedTicket((prev) =>
+          prev ? { ...prev, ...fields, updated: new Date().toISOString() } : null
+        );
       }
 
       const response = await fetch(`/api/tickets/${ticketId}`, {
@@ -181,7 +184,7 @@ export function App() {
         body: JSON.stringify(fields),
       });
       if (!response.ok) throw new Error('Failed to update ticket');
-      
+
       showToast('Ticket updated successfully!', 'success');
     } catch (error) {
       console.error('Error updating ticket:', error);
@@ -194,13 +197,13 @@ export function App() {
   const deleteTicket = async (ticketId: string) => {
     try {
       // Optimistically remove the ticket
-      setTickets(prevTickets => prevTickets.filter(ticket => ticket.id !== ticketId));
+      setTickets((prevTickets) => prevTickets.filter((ticket) => ticket.id !== ticketId));
 
       const response = await fetch(`/api/tickets/${ticketId}`, {
         method: 'DELETE',
       });
       if (!response.ok) throw new Error('Failed to delete ticket');
-      
+
       showToast('Ticket deleted successfully!', 'success');
     } catch (error) {
       console.error('Error deleting ticket:', error);
@@ -244,10 +247,14 @@ export function App() {
         onSetSearchQuery={setSearchQuery}
       />
       <div id='main-content'>
-        <KanbanBoard tickets={filteredTickets} onUpdateStatus={updateTicketStatus} onViewTicket={viewTicket} />
+        <KanbanBoard
+          tickets={filteredTickets}
+          onUpdateStatus={updateTicketStatus}
+          onViewTicket={viewTicket}
+        />
       </div>
       <ToastContainer toasts={toasts} onDismiss={dismissToast} />
-      <TicketModal 
+      <TicketModal
         ticket={selectedTicket}
         isOpen={isModalOpen}
         onClose={closeModal}

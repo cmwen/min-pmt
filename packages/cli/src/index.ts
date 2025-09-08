@@ -4,6 +4,7 @@ import {
   initializeConfig,
   ListTicketsQuerySchema,
   loadConfig,
+  type Ticket,
   TicketManager,
   type TicketStatus,
   TicketStatusSchema,
@@ -34,6 +35,35 @@ interface EditOptions {
   labels?: string;
   assignee?: string;
   due?: string;
+}
+
+// Helper functions for edit command
+function prepareUpdateData(options: EditOptions): Partial<Ticket> {
+  const updateData: Partial<Ticket> = {};
+  if (options.title !== undefined) updateData.title = options.title;
+  if (options.description !== undefined) updateData.description = options.description;
+  if (options.priority !== undefined) updateData.priority = options.priority;
+  if (options.assignee !== undefined) updateData.assignee = options.assignee;
+  if (options.due !== undefined) updateData.due = options.due;
+  if (options.labels !== undefined) {
+    updateData.labels = options.labels
+      .split(',')
+      .map((s: string) => s.trim())
+      .filter(Boolean);
+  }
+  return updateData;
+}
+
+function handleValidationError(parsed: { success: false; error: { issues: unknown } }): void {
+  process.stderr.write('Invalid update options.\n');
+  process.stderr.write(`${JSON.stringify(parsed.error.issues, null, 2)}\n`);
+  process.exitCode = 1;
+}
+
+function showUpdatedFields(updateData: Partial<Ticket>): void {
+  for (const [key, value] of Object.entries(updateData)) {
+    console.log(`  ${key}: ${value}`);
+  }
 }
 
 export async function runCli(argv: string[] = process.argv): Promise<void> {
@@ -194,7 +224,7 @@ export async function runCli(argv: string[] = process.argv): Promise<void> {
       }
       console.log(`Created: ${new Date(ticket.created).toLocaleString()}`);
       console.log(`Updated: ${new Date(ticket.updated).toLocaleString()}`);
-      
+
       if (ticket.description) {
         console.log('\nDescription:');
         console.log('-'.repeat(20));
@@ -220,7 +250,7 @@ export async function runCli(argv: string[] = process.argv): Promise<void> {
     .action(async (ticketId: string, options: EditOptions) => {
       const cfg = await loadConfig();
       const tm = new TicketManager(cfg);
-      
+
       // Check if ticket exists
       const existingTicket = await tm.getTicketById(ticketId);
       if (!existingTicket) {
@@ -230,25 +260,12 @@ export async function runCli(argv: string[] = process.argv): Promise<void> {
       }
 
       // Prepare update data
-      const updateData: any = {};
-      if (options.title !== undefined) updateData.title = options.title;
-      if (options.description !== undefined) updateData.description = options.description;
-      if (options.priority !== undefined) updateData.priority = options.priority;
-      if (options.assignee !== undefined) updateData.assignee = options.assignee;
-      if (options.due !== undefined) updateData.due = options.due;
-      if (options.labels !== undefined) {
-        updateData.labels = options.labels
-          .split(',')
-          .map((s: string) => s.trim())
-          .filter(Boolean);
-      }
+      const updateData = prepareUpdateData(options);
 
       // Validate the update data
       const parsed = UpdateTicketSchema.safeParse(updateData);
       if (!parsed.success) {
-        process.stderr.write('Invalid update options.\n');
-        process.stderr.write(`${JSON.stringify(parsed.error.issues, null, 2)}\n`);
-        process.exitCode = 1;
+        handleValidationError(parsed);
         return;
       }
 
@@ -260,11 +277,9 @@ export async function runCli(argv: string[] = process.argv): Promise<void> {
 
       const updated = await tm.updateTicketFields(ticketId, parsed.data);
       process.stdout.write(`Updated ticket: ${updated.id}\n`);
-      
+
       // Show what was changed
-      for (const [key, value] of Object.entries(updateData)) {
-        console.log(`  ${key}: ${value}`);
-      }
+      showUpdatedFields(updateData);
     });
 
   program
@@ -276,7 +291,7 @@ export async function runCli(argv: string[] = process.argv): Promise<void> {
     .action(async (ticketId: string, options: { force?: boolean }) => {
       const cfg = await loadConfig();
       const tm = new TicketManager(cfg);
-      
+
       // Check if ticket exists
       const existingTicket = await tm.getTicketById(ticketId);
       if (!existingTicket) {
@@ -288,7 +303,7 @@ export async function runCli(argv: string[] = process.argv): Promise<void> {
       if (!options.force) {
         // Simple confirmation (in a real CLI, you might use a proper prompt library)
         process.stdout.write(`Delete ticket "${existingTicket.title}" (${ticketId})? [y/N]: `);
-        
+
         // For this demo, we'll assume 'yes' - in production you'd read from stdin
         const confirm = process.env.CLI_CONFIRM_DELETE === 'yes';
         if (!confirm) {

@@ -161,7 +161,8 @@ export class MinPmtMcpServer {
       {},
       {
         title: 'Get Configuration',
-        description: 'Get the current project configuration including templates, states, and schema.',
+        description:
+          'Get the current project configuration including templates, states, and schema.',
         idempotentHint: true,
         readOnlyHint: true,
       },
