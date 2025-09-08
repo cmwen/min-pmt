@@ -1,6 +1,5 @@
 {
   "name": "min-pmt",
-  "private": true,
   "version": "0.0.0",
   "description": "Minimal Project Management Tool - monorepo",
   "packageManager": "pnpm@10.15.1",
