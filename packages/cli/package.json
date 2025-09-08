@@ -1,16 +1,16 @@
 {
   "name": "@cmwen/min-pmt",
-  "version": "0.2.0",
+  "version": "0.2.8",
   "description": "Minimal Project Management Tool CLI",
   "type": "module",
-  "bin": {
-    "min-pmt": "dist/index.js"
-  },
+  "main": "dist/bundled.js",
+  "bin": "dist/bundled.js",
   "files": [
-    "dist"
+    "dist/bundled.js"
   ],
   "scripts": {
     "build": "tsc -b",
+    "build:bundle": "node scripts/rolldown-bundle.js",
     "prepare": "tsc -b",
     "test": "vitest run",
     "lint": "biome check --write src test",
@@ -19,12 +19,15 @@
     "format:check": "biome format src test"
   },
   "dependencies": {
-    "@cmwen/min-pmt-core": "workspace:*",
-    "@cmwen/min-pmt-web": "workspace:*",
-    "commander": "^12.1.0"
+    "commander": "^12.1.0",
+    "gray-matter": "^4.0.3"
   },
   "devDependencies": {
-    "vitest": "latest"
+    "@cmwen/min-pmt-core": "workspace:*",
+    "@cmwen/min-pmt-web": "workspace:*",
+    "rolldown": "1.0.0-beta.36",
+    "vitest": "latest",
+    "vite": "latest"
   },
   "publishConfig": {
     "access": "public"

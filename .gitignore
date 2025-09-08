@@ -9,6 +9,9 @@ node_modules/
 dist/
 packages/**/dist/
 
+# Publishing backups
+.publish-backup/
+
 # Logs
 npm-debug.log*
 yarn-debug.log*

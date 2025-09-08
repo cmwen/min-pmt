@@ -1,4 +1,7 @@
 #!/usr/bin/env node
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import {
   CreateTicketSchema,
   initializeConfig,
@@ -11,6 +14,12 @@ import {
   UpdateTicketSchema,
 } from '@cmwen/min-pmt-core';
 import { Command } from 'commander';
+
+// Get package version
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const packageJson = JSON.parse(readFileSync(join(__dirname, '../package.json'), 'utf8'));
+const version = packageJson.version;
 
 interface AddOptions {
   description?: string;
@@ -68,7 +77,7 @@ function showUpdatedFields(updateData: Partial<Ticket>): void {
 
 export async function runCli(argv: string[] = process.argv): Promise<void> {
   const program = new Command();
-  program.name('min-pmt').description('Minimal Project Management Tool').version('0.1.0');
+  program.name('min-pmt').description('Minimal Project Management Tool').version(version);
 
   program
     .command('init')
@@ -332,6 +341,10 @@ export async function runCli(argv: string[] = process.argv): Promise<void> {
 }
 
 // If executed directly (not imported), run the CLI
-if (import.meta.url === new URL(`file://${process.argv[1]}`).toString()) {
+if (
+  import.meta.url === `file://${process.argv[1]}` ||
+  process.argv[1]?.endsWith('min-pmt') ||
+  process.argv[1]?.includes('node_modules/.bin/')
+) {
   runCli();
 }

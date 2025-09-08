@@ -4,6 +4,8 @@
 
 min-pmt is a TypeScript monorepo for a minimal project management tool with filesystem-backed ticket storage. The repository contains a core ticket engine, CLI, web UI, and MCP server components.
 
+**Publishing Model**: Single-package CLI with bundled dependencies. Only the CLI package needs to be published - it bundles all core and web functionality using Rolldown.
+
 ## Prerequisites and Installation
 
 **Required versions:**
@@ -71,20 +73,20 @@ pnpm build && pnpm test
 
 **ALWAYS test these scenarios after making changes to verify functionality:**
 
-**1. CLI Functionality Test:**
+**1. CLI Bundled Functionality Test:**
 ```bash
 cd /tmp && mkdir test-pmt && cd test-pmt
 
-# Test CLI init
-node /path/to/min-pmt/packages/cli/dist/index.js init
+# Test bundled CLI init  
+node /path/to/min-pmt/packages/cli/dist/bundled.js init
 # Expected: "Initialized min-pmt in folder: pmt"
 
 # Test adding tickets
-node /path/to/min-pmt/packages/cli/dist/index.js add "Test ticket" --priority high
+node /path/to/min-pmt/packages/cli/dist/bundled.js add "Test ticket" --priority high
 # Expected: Returns ticket ID like "ticket-test-ticket-mfafy4eu"
 
 # Test listing tickets
-node /path/to/min-pmt/packages/cli/dist/index.js list
+node /path/to/min-pmt/packages/cli/dist/bundled.js list
 # Expected: Table showing the created ticket with title, status='todo', priority='high'
 
 # Cleanup
@@ -94,7 +96,7 @@ cd /tmp && rm -rf test-pmt
 **2. Web Server Test:**
 ```bash
 cd /tmp/test-pmt  # Use directory from CLI test above
-timeout 10s node /path/to/min-pmt/packages/cli/dist/index.js web --port 3001
+timeout 10s node /path/to/min-pmt/packages/cli/dist/bundled.js web --port 3001
 # Expected: "min-pmt WebUI http://localhost:3001" message
 ```
 
@@ -193,8 +195,31 @@ const todos = await tm.listTickets({ status: 'todo' });
 - Use `pnpm lint:ci` to check without fixing
 
 **Permission errors with CLI:**
-- Use `node packages/cli/dist/index.js` instead of direct execution
+- Use `node packages/cli/dist/bundled.js` for testing bundled version
 - Ensure `pnpm build` was run first
+
+## Publishing
+
+**Bundled CLI Publishing (Recommended):**
+```bash
+# Bundle all dependencies into single file
+cd packages/cli && pnpm run build:bundle
+
+# Publish single package to npm
+npm publish
+```
+
+**Key Benefits:**
+- Only CLI package needs publishing (core + web bundled inside)
+- Dependencies: commander + gray-matter (installed from npm)
+- Built with Rolldown (Rust-based, fast bundler)
+- Single executable file: `dist/bundled.js`
+
+**Publishing Workflow:**
+1. Bundle CLI: `pnpm run build:bundle` 
+2. Test bundled CLI: `node dist/bundled.js init`
+3. Publish: `npm publish`
+4. Users run: `npx @cmwen/min-pmt`
 
 ## CI/CD Information
 

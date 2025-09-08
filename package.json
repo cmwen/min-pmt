@@ -17,7 +17,9 @@
     "lint:ci": "biome check .",
     "format": "biome format --write .",
     "format:check": "biome format .",
-    "clean": "git clean -Xdf && rm -rf packages/**/dist"
+    "clean": "git clean -Xdf && rm -rf packages/**/dist",
+    "publish:cli": "cd packages/cli && pnpm run build:bundle && npm publish",
+    "bundle:cli": "cd packages/cli && pnpm run build:bundle"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.2.3",

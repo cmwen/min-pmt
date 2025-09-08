@@ -230,10 +230,18 @@ const ticket = await tm.createTicket({
 });
 ```
 
+## Technical Details
+
+This CLI is built with **Rolldown** (Rust-based bundler) and bundles all dependencies into a single executable file. It only requires two external npm packages: `commander` and `gray-matter`.
+
 ## Requirements
 
 - Node.js >= 18.18
-- Optional: pnpm >= 9 (for development)
+- Dependencies: commander, gray-matter (auto-installed)
+
+## Development
+
+For development on this CLI, see the [main repository](https://github.com/cmwen/min-pmt).
 
 ## License
 

@@ -1,0 +1,22 @@
+{
+  "name": "@cmwen/min-pmt",
+  "version": "0.2.7",
+  "description": "Minimal Project Management Tool CLI",
+  "type": "module",
+  "main": "dist/bundled.js",
+  "bin": "dist/bundled.js",
+  "files": ["dist/bundled.js"],
+  "dependencies": {
+    "commander": "^12.1.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cmwen/min-pmt.git",
+    "directory": "packages/cli"
+  },
+  "license": "MIT",
+  "author": "cmwen"
+}
