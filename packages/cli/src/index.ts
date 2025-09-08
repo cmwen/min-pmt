@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 import {
-  ConfigLoader,
   CreateTicketSchema,
+  initializeConfig,
   ListTicketsQuerySchema,
+  loadConfig,
   TicketManager,
   type TicketStatus,
   TicketStatusSchema,
@@ -34,7 +35,7 @@ export async function runCli(argv: string[] = process.argv): Promise<void> {
     .description('Initialize min-pmt in current project')
     .option('-f, --folder <name>', 'PMT folder name', 'pmt')
     .action(async (opts: { folder: string }) => {
-      const cfg = await ConfigLoader.initialize({ folder: opts.folder });
+      const cfg = await initializeConfig({ folder: opts.folder });
       const tm = new TicketManager(cfg);
       await tm.ensureInitialized();
       process.stdout.write(`Initialized min-pmt in folder: ${cfg.folder}\n`);
@@ -48,7 +49,7 @@ export async function runCli(argv: string[] = process.argv): Promise<void> {
     .option('-l, --labels <labels>', 'Comma-separated labels')
     .option('-s, --status <status>', 'Initial status')
     .action(async (title: string, options: AddOptions) => {
-      const cfg = await ConfigLoader.load();
+      const cfg = await loadConfig();
       const tm = new TicketManager(cfg);
       const labels = options.labels
         ? String(options.labels)
@@ -86,7 +87,7 @@ export async function runCli(argv: string[] = process.argv): Promise<void> {
     .option('-s, --status <status>', 'Filter by status')
     .option('-p, --priority <priority>', 'Filter by priority')
     .action(async (options: ListOptions) => {
-      const cfg = await ConfigLoader.load();
+      const cfg = await loadConfig();
       const tm = new TicketManager(cfg);
       const q = ListTicketsQuerySchema.safeParse({
         status: options.status,
@@ -113,7 +114,7 @@ export async function runCli(argv: string[] = process.argv): Promise<void> {
     .command('move <ticketId> <newStatus>')
     .description('Move ticket to different status')
     .action(async (ticketId: string, newStatus: string) => {
-      const cfg = await ConfigLoader.load();
+      const cfg = await loadConfig();
       const tm = new TicketManager(cfg);
       const statusParsed = TicketStatusSchema.safeParse(newStatus);
       if (!statusParsed.success) {

@@ -1,5 +1,5 @@
-import type { Ticket } from '../App';
 import type { JSX } from 'preact';
+import type { Ticket } from '../App';
 
 interface TicketCardProps {
   ticket: Ticket;
@@ -31,12 +31,7 @@ export function TicketCard({ ticket, onUpdateStatus }: TicketCardProps) {
   };
 
   return (
-    <button
-      type='button'
-      className='card'
-      onClick={handleClick}
-      onKeyDown={handleKeyDown}
-    >
+    <button type='button' className='card' onClick={handleClick} onKeyDown={handleKeyDown}>
       <h3>{ticket.title}</h3>
       <p>
         #{formatId(ticket.id)}

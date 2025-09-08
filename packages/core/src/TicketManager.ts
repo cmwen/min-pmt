@@ -158,7 +158,9 @@ export class TicketManager {
       parsed.data = parsed.data || {};
       for (const [k, v] of Object.entries(fields)) {
         // undefined means do not change
-        if (v !== undefined) (parsed.data as any)[k] = v;
+        if (v !== undefined) {
+          (parsed.data as Record<string, unknown>)[k] = v;
+        }
       }
       parsed.data.updated = new Date().toISOString();
       const nextContent = matter.stringify(parsed.content, parsed.data);

@@ -1,9 +1,9 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
-  ConfigLoader,
   CreateTicketSchema,
   ListTicketsQuerySchema,
+  loadConfig,
   StatusUpdateSchema,
   TicketManager,
   UpdateTicketSchema,
@@ -122,7 +122,7 @@ export class WebUIServer {
   }
 
   async start(): Promise<void> {
-    const cfg = await ConfigLoader.load();
+    const cfg = await loadConfig();
     // ensure folder exists
     const tm = new TicketManager(cfg);
     await tm.ensureInitialized();
