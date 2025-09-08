@@ -8,7 +8,14 @@ export function sum(a: number, b: number): number {
 
 export { initializeConfig, loadConfig } from './ConfigLoader.js';
 export { TicketManager } from './TicketManager.js';
-export type { ProjectConfig, Ticket, TicketStatus } from './types.js';
+export type {
+  FieldConfig,
+  ProjectConfig,
+  StateConfig,
+  TemplateConfig,
+  Ticket,
+  TicketStatus,
+} from './types.js';
 export {
   CreateTicketSchema,
   ListTicketsQuerySchema,

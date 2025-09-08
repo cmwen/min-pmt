@@ -114,6 +114,17 @@ export class WebUIServer {
       }
     });
 
+    // Get project configuration
+    this._app.get('/api/config', async (_req, res) => {
+      try {
+        const config = this.ticketManager.getConfig();
+        res.json(config);
+      } catch (err: unknown) {
+        const errorObj = err as { message?: string };
+        res.status(500).json({ error: errorObj?.message || 'Internal error' });
+      }
+    });
+
     // Serve SPA index for other routes
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
     this._app.get('*', (_req, res) => {

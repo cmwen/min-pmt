@@ -14,7 +14,7 @@ export function TicketCard({ ticket, onUpdateStatus }: TicketCardProps) {
 
   const handleClick = () => {
     if (isEditing) return; // Don't cycle status when editing
-    
+
     const statuses: Ticket['status'][] = ['todo', 'in-progress', 'done'];
     const currentIndex = statuses.indexOf(ticket.status);
     const nextIndex = (currentIndex + 1) % statuses.length;
@@ -25,9 +25,9 @@ export function TicketCard({ ticket, onUpdateStatus }: TicketCardProps) {
     }
   };
 
-  const handleKeyDown = (e: JSX.TargetedKeyboardEvent<HTMLDivElement>) => {
+  const handleKeyDown = (e: JSX.TargetedKeyboardEvent<HTMLButtonElement>) => {
     if (isEditing) return;
-    
+
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       handleClick();
@@ -37,7 +37,7 @@ export function TicketCard({ ticket, onUpdateStatus }: TicketCardProps) {
     }
   };
 
-  const handleDoubleClick = (e: JSX.TargetedMouseEvent<HTMLDivElement>) => {
+  const handleDoubleClick = (e: JSX.TargetedMouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     setIsEditing(true);
   };
@@ -46,7 +46,11 @@ export function TicketCard({ ticket, onUpdateStatus }: TicketCardProps) {
     try {
       // For now, we'll just update locally since the API doesn't support PATCH for title/description
       // In a real implementation, you'd want to add an API endpoint for this
-      console.log('Would update ticket:', { id: ticket.id, title: editTitle, description: editDescription });
+      console.log('Would update ticket:', {
+        id: ticket.id,
+        title: editTitle,
+        description: editDescription,
+      });
       setIsEditing(false);
       // TODO: Actually save to backend when API is expanded
     } catch (error) {
@@ -88,69 +92,61 @@ export function TicketCard({ ticket, onUpdateStatus }: TicketCardProps) {
 
   if (isEditing) {
     return (
-      <div className={`card card-editing ${priorityClass}`}>
-        <div className="card-edit-form">
-          <input
-            type="text"
-            value={editTitle}
-            onChange={(e) => setEditTitle((e.target as HTMLInputElement).value)}
-            onKeyDown={handleEditKeyDown}
-            className="card-edit-title"
-            placeholder="Ticket title..."
-            autoFocus
-          />
-          <textarea
-            value={editDescription}
-            onChange={(e) => setEditDescription((e.target as HTMLTextAreaElement).value)}
-            onKeyDown={handleEditKeyDown}
-            className="card-edit-description"
-            placeholder="Description (optional)..."
-            rows={3}
-          />
-          <div className="card-edit-actions">
-            <button onClick={handleSave} className="btn-save">
-              Save (⌘+Enter)
-            </button>
-            <button onClick={handleCancel} className="btn-cancel">
-              Cancel (Esc)
-            </button>
+      <li>
+        <div className={`card card-editing ${priorityClass}`}>
+          <div className='card-edit-form'>
+            <input
+              type='text'
+              value={editTitle}
+              onChange={(e) => setEditTitle((e.target as HTMLInputElement).value)}
+              onKeyDown={handleEditKeyDown}
+              className='card-edit-title'
+              placeholder='Ticket title...'
+            />
+            <textarea
+              value={editDescription}
+              onChange={(e) => setEditDescription((e.target as HTMLTextAreaElement).value)}
+              onKeyDown={handleEditKeyDown}
+              className='card-edit-description'
+              placeholder='Description (optional)...'
+              rows={3}
+            />
+            <div className='card-edit-actions'>
+              <button type='button' onClick={handleSave} className='btn-save'>
+                Save (⌘+Enter)
+              </button>
+              <button type='button' onClick={handleCancel} className='btn-cancel'>
+                Cancel (Esc)
+              </button>
+            </div>
           </div>
+          <p>#{formatId(ticket.id)}</p>
         </div>
-        <p>
-          #{formatId(ticket.id)}
-        </p>
-      </div>
+      </li>
     );
   }
 
   return (
-    <button
-      type='button'
-      className={`card ${priorityClass}`}
-      draggable
-      onDragStart={onDragStart as unknown as any}
-      onClick={handleClick}
-      onKeyDown={handleKeyDown}
-      onDblClick={handleDoubleClick as unknown as any}
-      title="Click to move status, double-click to edit, or press 'e' to edit"
-      role="listitem"
-      aria-label={`Ticket: ${ticket.title}. Priority: ${ticket.priority || 'none'}. Status: ${ticket.status}. Press Enter to move to next status, E to edit.`}
-    >
-      <div className='card-header'>
-        <h3>{ticket.title}</h3>
-        {ticket.priority && <span className={`badge ${priorityClass}`}>{ticket.priority}</span>}
-      </div>
-      <p>
-        #{formatId(ticket.id)}
-      </p>
-      {ticket.description && (
-        <p className='desc'>
-          {ticket.description}
-        </p>
-      )}
-      <div className="card-hint">
-        Double-click to edit
-      </div>
-    </button>
+    <li>
+      <button
+        type='button'
+        className={`card ${priorityClass}`}
+        draggable
+        onDragStart={onDragStart as (e: DragEvent) => void}
+        onClick={handleClick}
+        onKeyDown={handleKeyDown}
+        onDblClick={handleDoubleClick as (e: JSX.TargetedMouseEvent<HTMLButtonElement>) => void}
+        title="Click to move status, double-click to edit, or press 'e' to edit"
+        aria-label={`Ticket: ${ticket.title}. Priority: ${ticket.priority || 'none'}. Status: ${ticket.status}. Press Enter to move to next status, E to edit.`}
+      >
+        <div className='card-header'>
+          <h3>{ticket.title}</h3>
+          {ticket.priority && <span className={`badge ${priorityClass}`}>{ticket.priority}</span>}
+        </div>
+        <p>#{formatId(ticket.id)}</p>
+        {ticket.description && <p className='desc'>{ticket.description}</p>}
+        <div className='card-hint'>Double-click to edit</div>
+      </button>
+    </li>
   );
 }

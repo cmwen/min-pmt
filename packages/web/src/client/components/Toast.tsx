@@ -29,22 +29,22 @@ export function Toast({ toast, onDismiss }: ToastProps) {
         return '❌';
       case 'warning':
         return '⚠️';
-      case 'info':
       default:
         return 'ℹ️';
     }
   };
 
   return (
-    <div className={`toast toast-${toast.type}`} role="alert" aria-live="polite">
-      <div className="toast-content">
-        <span className="toast-icon">{getToastIcon()}</span>
-        <span className="toast-message">{toast.message}</span>
+    <div className={`toast toast-${toast.type}`} role='alert' aria-live='polite'>
+      <div className='toast-content'>
+        <span className='toast-icon'>{getToastIcon()}</span>
+        <span className='toast-message'>{toast.message}</span>
       </div>
       <button
-        className="toast-close"
+        type='button'
+        className='toast-close'
         onClick={() => onDismiss(toast.id)}
-        aria-label="Dismiss notification"
+        aria-label='Dismiss notification'
       >
         ×
       </button>
@@ -59,7 +59,7 @@ interface ToastContainerProps {
 
 export function ToastContainer({ toasts, onDismiss }: ToastContainerProps) {
   return (
-    <div className="toast-container">
+    <div className='toast-container'>
       {toasts.map((toast) => (
         <Toast key={toast.id} toast={toast} onDismiss={onDismiss} />
       ))}

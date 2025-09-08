@@ -42,6 +42,38 @@ export async function runCli(argv: string[] = process.argv): Promise<void> {
     });
 
   program
+    .command('config')
+    .description('Show current project configuration')
+    .action(async () => {
+      try {
+        const cfg = await loadConfig();
+        const tm = new TicketManager(cfg);
+        const config = tm.getConfig();
+
+        console.log('Current Configuration:');
+        console.log('====================');
+        console.log(`Folder: ${config.folder}`);
+
+        if (config.states && Object.keys(config.states).length > 0) {
+          console.log('\nStates:');
+          for (const [status, stateConfig] of Object.entries(config.states)) {
+            console.log(`  ${status}: ${stateConfig.color} (order: ${stateConfig.order})`);
+          }
+        }
+
+        if (config.template) {
+          console.log('\nTemplate:');
+          console.log(`  Default Status: ${config.template.defaultStatus}`);
+          console.log(`  ID Prefix: ${config.template.idPrefix}`);
+          console.log(`  Generate ID: ${config.template.generateId}`);
+        }
+      } catch (error) {
+        process.stderr.write(`Error loading configuration: ${error}\n`);
+        process.exitCode = 1;
+      }
+    });
+
+  program
     .command('add <title>')
     .description('Create a new ticket')
     .option('-d, --description <desc>', 'Ticket description')

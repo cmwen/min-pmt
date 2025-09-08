@@ -1,6 +1,6 @@
+import { useState } from 'preact/hooks';
 import type { Ticket } from '../App';
 import { TicketCard } from './TicketCard';
-import { useState } from 'preact/hooks';
 
 interface KanbanBoardProps {
   tickets: Ticket[];
@@ -19,8 +19,8 @@ export function KanbanBoard({ tickets, onUpdateStatus }: KanbanBoardProps) {
   };
 
   return (
-    <main role="main" aria-label="Kanban board">
-      <div className='kanban' role="group" aria-label="Project columns">
+    <main aria-label='Kanban board'>
+      <fieldset className='kanban' aria-label='Project columns'>
         {columns.map((column) => {
           const items = getTicketsForStatus(column.status);
           return (
@@ -33,9 +33,9 @@ export function KanbanBoard({ tickets, onUpdateStatus }: KanbanBoardProps) {
               onDropTicket={(id) => onUpdateStatus(id, column.status)}
             >
               {items.length === 0 ? (
-                <div className='empty-col' role="status" aria-label={`No tickets in ${column.title}`}>
+                <output className='empty-col' aria-label={`No tickets in ${column.title}`}>
                   No items
-                </div>
+                </output>
               ) : (
                 items.map((ticket) => (
                   <TicketCard key={ticket.id} ticket={ticket} onUpdateStatus={onUpdateStatus} />
@@ -44,7 +44,7 @@ export function KanbanBoard({ tickets, onUpdateStatus }: KanbanBoardProps) {
             </Column>
           );
         })}
-      </div>
+      </fieldset>
     </main>
   );
 }
@@ -77,27 +77,29 @@ function Column({ title, description, status, count, onDropTicket, children }: C
     <section
       className={`col${isOver ? ' drag-over' : ''}`}
       data-status={status}
-      onDragOver={onDragOver as unknown as any}
-      onDragLeave={onDragLeave as unknown as any}
-      onDrop={onDrop as unknown as any}
-      role="region"
+      onDragOver={onDragOver as (e: DragEvent) => void}
+      onDragLeave={onDragLeave as () => void}
+      onDrop={onDrop as (e: DragEvent) => void}
       aria-labelledby={`column-${status}-title`}
       aria-describedby={`column-${status}-desc`}
     >
       <h2 id={`column-${status}-title`}>
         {title}
-        <span className='count-badge' aria-label={`${count} tickets`}>{count}</span>
+        <span className='count-badge' title={`${count} tickets`}>
+          {count}
+        </span>
       </h2>
-      <p id={`column-${status}-desc`} className="sr-only">{description}</p>
-      <div 
-        className='list' 
-        role="list" 
+      <p id={`column-${status}-desc`} className='sr-only'>
+        {description}
+      </p>
+      <ul
+        className='list'
         aria-label={`${title} tickets`}
-        aria-live="polite"
-        aria-relevant="additions removals"
+        aria-live='polite'
+        aria-relevant='additions removals'
       >
         {children}
-      </div>
+      </ul>
     </section>
   );
 }

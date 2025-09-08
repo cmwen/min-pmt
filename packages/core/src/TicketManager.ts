@@ -1,7 +1,15 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import matter from 'gray-matter';
-import { defaultConfig, type ProjectConfig, type Ticket, type TicketStatus } from './types.js';
+import {
+  defaultConfig,
+  type FieldConfig,
+  type ProjectConfig,
+  type StateConfig,
+  type TemplateConfig,
+  type Ticket,
+  type TicketStatus,
+} from './types.js';
 
 export class TicketManager {
   constructor(private config: ProjectConfig = defaultConfig) {}
@@ -30,7 +38,7 @@ export class TicketManager {
     await this.ensureInitialized();
     const now = new Date().toISOString();
     const id = await this.generateId(input.title);
-    const status: TicketStatus = input.status ?? 'todo';
+    const status: TicketStatus = input.status ?? this.config.template?.defaultStatus ?? 'todo';
     const data = {
       id,
       title: input.title,
@@ -50,7 +58,9 @@ export class TicketManager {
       if (v !== undefined) frontmatter[k] = v;
     }
 
-    const body = `\n## Notes\n`;
+    // Use template content or fallback to default
+    const templateContent = this.config.template?.content ?? `## Notes\n`;
+    const body = `\n${templateContent}\n`;
     const content = matter.stringify(body, frontmatter);
 
     const filePath = path.join(this.pmtDir(), `${id}.md`);
@@ -163,6 +173,9 @@ export class TicketManager {
   }
 
   private async generateId(title: string): Promise<string> {
+    // Use configured prefix or default
+    const prefix = this.config.template?.idPrefix ?? 'ticket-';
+
     // simple slug + timestamp
     const slug = title
       .toLowerCase()
@@ -170,7 +183,7 @@ export class TicketManager {
       .replace(/^-+|-+$/g, '')
       .slice(0, 32);
     const ts = Date.now().toString(36);
-    return `ticket-${slug || 'item'}-${ts}`;
+    return `${prefix}${slug || 'item'}-${ts}`;
   }
 
   private parseTicketFromMatter(
@@ -206,5 +219,40 @@ export class TicketManager {
     }
     await walk(dir);
     return out;
+  }
+
+  /**
+   * Get the project configuration
+   */
+  getConfig(): ProjectConfig {
+    return this.config;
+  }
+
+  /**
+   * Get available ticket states with their configuration
+   */
+  getStates(): Record<string, StateConfig> {
+    return this.config.states ?? {};
+  }
+
+  /**
+   * Get field schema configuration
+   */
+  getSchema(): Record<string, FieldConfig> {
+    return this.config.schema ?? {};
+  }
+
+  /**
+   * Get template configuration
+   */
+  getTemplate(): TemplateConfig {
+    return (
+      this.config.template ?? {
+        defaultStatus: 'todo',
+        generateId: true,
+        idPrefix: 'ticket-',
+        content: '## Notes\n',
+      }
+    );
   }
 }

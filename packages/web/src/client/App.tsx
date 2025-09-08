@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useMemo } from 'preact/hooks';
+import { useCallback, useEffect, useMemo, useState } from 'preact/hooks';
 import { Header } from './components/Header';
 import { KanbanBoard } from './components/KanbanBoard';
 import { ToastContainer, type ToastMessage } from './components/Toast';
@@ -25,35 +25,39 @@ export function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
-  const showToast = useCallback((message: string, type: ToastMessage['type'] = 'info', duration?: number) => {
-    const id = Date.now().toString();
-    const toast: ToastMessage = { id, message, type, duration };
-    setToasts(prev => [...prev, toast]);
-  }, []);
+  const showToast = useCallback(
+    (message: string, type: ToastMessage['type'] = 'info', duration?: number) => {
+      const id = Date.now().toString();
+      const toast: ToastMessage = { id, message, type, duration };
+      setToasts((prev) => [...prev, toast]);
+    },
+    []
+  );
 
   const dismissToast = useCallback((id: string) => {
-    setToasts(prev => prev.filter(toast => toast.id !== id));
+    setToasts((prev) => prev.filter((toast) => toast.id !== id));
   }, []);
 
   // Filter tickets based on search query and priority filter
   const filteredTickets = useMemo(() => {
     let filtered = tickets;
-    
+
     // Apply search filter
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
-      filtered = filtered.filter(ticket => 
-        ticket.title.toLowerCase().includes(query) ||
-        (ticket.description && ticket.description.toLowerCase().includes(query)) ||
-        ticket.id.toLowerCase().includes(query)
+      filtered = filtered.filter(
+        (ticket) =>
+          ticket.title.toLowerCase().includes(query) ||
+          ticket.description?.toLowerCase().includes(query) ||
+          ticket.id.toLowerCase().includes(query)
       );
     }
-    
+
     // Apply priority filter
     if (priorityFilter) {
-      filtered = filtered.filter(ticket => ticket.priority === priorityFilter);
+      filtered = filtered.filter((ticket) => ticket.priority === priorityFilter);
     }
-    
+
     return filtered;
   }, [tickets, searchQuery, priorityFilter]);
 
@@ -126,7 +130,7 @@ export function App() {
 
   return (
     <div>
-      <a href="#main-content" className="skip-link">
+      <a href='#main-content' className='skip-link'>
         Skip to main content
       </a>
       <Header
@@ -136,7 +140,7 @@ export function App() {
         searchQuery={searchQuery}
         onSetSearchQuery={setSearchQuery}
       />
-      <div id="main-content">
+      <div id='main-content'>
         <KanbanBoard tickets={filteredTickets} onUpdateStatus={updateTicketStatus} />
       </div>
       <ToastContainer toasts={toasts} onDismiss={dismissToast} />
