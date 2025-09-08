@@ -1,3 +1,3 @@
 export default {
-  folder: 'pmt',
-};
+  "folder": "pmt"
+}
