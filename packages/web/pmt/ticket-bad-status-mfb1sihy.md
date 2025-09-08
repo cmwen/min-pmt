@@ -1,10 +1,10 @@
 ---
-id: ticket-bad-status-mfb1if0i
+id: ticket-bad-status-mfb1sihy
 title: Bad Status
 description: ''
 status: todo
-created: '2025-09-08T11:30:11.970Z'
-updated: '2025-09-08T11:30:11.970Z'
+created: '2025-09-08T11:38:03.046Z'
+updated: '2025-09-08T11:38:03.046Z'
 ---
 
 ## Description

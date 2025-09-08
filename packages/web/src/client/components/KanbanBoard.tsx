@@ -5,9 +5,10 @@ import { TicketCard } from './TicketCard';
 interface KanbanBoardProps {
   tickets: Ticket[];
   onUpdateStatus: (ticketId: string, newStatus: Ticket['status']) => void;
+  onViewTicket: (ticket: Ticket) => void;
 }
 
-export function KanbanBoard({ tickets, onUpdateStatus }: KanbanBoardProps) {
+export function KanbanBoard({ tickets, onUpdateStatus, onViewTicket }: KanbanBoardProps) {
   const columns: { status: Ticket['status']; title: string; description: string }[] = [
     { status: 'todo', title: 'Todo', description: 'Tasks that need to be started' },
     { status: 'in-progress', title: 'In Progress', description: 'Tasks currently being worked on' },
@@ -38,7 +39,7 @@ export function KanbanBoard({ tickets, onUpdateStatus }: KanbanBoardProps) {
                 </output>
               ) : (
                 items.map((ticket) => (
-                  <TicketCard key={ticket.id} ticket={ticket} onUpdateStatus={onUpdateStatus} />
+                  <TicketCard key={ticket.id} ticket={ticket} onUpdateStatus={onUpdateStatus} onViewTicket={onViewTicket} />
                 ))
               )}
             </Column>

@@ -153,6 +153,23 @@ export class MinPmtMcpServer {
         return { content: [{ type: 'text', text: 'deleted' }] };
       }
     );
+
+    // get-config
+    this.server.tool(
+      'get-config',
+      'Get project configuration',
+      {},
+      {
+        title: 'Get Configuration',
+        description: 'Get the current project configuration including templates, states, and schema.',
+        idempotentHint: true,
+        readOnlyHint: true,
+      },
+      async () => {
+        const config = this.manager.getConfig();
+        return { content: [{ type: 'text', text: JSON.stringify(config, null, 2) }] };
+      }
+    );
   }
 
   async startStdio(): Promise<void> {

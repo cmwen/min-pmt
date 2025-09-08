@@ -5,24 +5,17 @@ import type { Ticket } from '../App';
 interface TicketCardProps {
   ticket: Ticket;
   onUpdateStatus: (ticketId: string, newStatus: Ticket['status']) => void;
+  onViewTicket: (ticket: Ticket) => void;
 }
 
-export function TicketCard({ ticket, onUpdateStatus }: TicketCardProps) {
+export function TicketCard({ ticket, onUpdateStatus, onViewTicket }: TicketCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(ticket.title);
   const [editDescription, setEditDescription] = useState(ticket.description || '');
 
   const handleClick = () => {
-    if (isEditing) return; // Don't cycle status when editing
-
-    const statuses: Ticket['status'][] = ['todo', 'in-progress', 'done'];
-    const currentIndex = statuses.indexOf(ticket.status);
-    const nextIndex = (currentIndex + 1) % statuses.length;
-    const newStatus = statuses[nextIndex];
-
-    if (confirm(`Move "${ticket.title}" to ${newStatus}?`)) {
-      onUpdateStatus(ticket.id, newStatus);
-    }
+    if (isEditing) return; // Don't show modal when editing
+    onViewTicket(ticket);
   };
 
   const handleKeyDown = (e: JSX.TargetedKeyboardEvent<HTMLButtonElement>) => {
@@ -34,6 +27,16 @@ export function TicketCard({ ticket, onUpdateStatus }: TicketCardProps) {
     } else if (e.key === 'e' || e.key === 'E') {
       e.preventDefault();
       setIsEditing(true);
+    } else if (e.key === 's' || e.key === 'S') {
+      // Quick status change with 's' key
+      e.preventDefault();
+      const statuses: Ticket['status'][] = ['todo', 'in-progress', 'done'];
+      const currentIndex = statuses.indexOf(ticket.status);
+      const nextIndex = (currentIndex + 1) % statuses.length;
+      const newStatus = statuses[nextIndex];
+      if (confirm(`Move "${ticket.title}" to ${newStatus}?`)) {
+        onUpdateStatus(ticket.id, newStatus);
+      }
     }
   };
 
@@ -136,8 +139,8 @@ export function TicketCard({ ticket, onUpdateStatus }: TicketCardProps) {
         onClick={handleClick}
         onKeyDown={handleKeyDown}
         onDblClick={handleDoubleClick as (e: JSX.TargetedMouseEvent<HTMLButtonElement>) => void}
-        title="Click to move status, double-click to edit, or press 'e' to edit"
-        aria-label={`Ticket: ${ticket.title}. Priority: ${ticket.priority || 'none'}. Status: ${ticket.status}. Press Enter to move to next status, E to edit.`}
+        title="Click to view details, double-click to edit, or press 'e' to edit, 's' to change status"
+        aria-label={`Ticket: ${ticket.title}. Priority: ${ticket.priority || 'none'}. Status: ${ticket.status}. Press Enter to view details, E to edit, S to change status.`}
       >
         <div className='card-header'>
           <h3>{ticket.title}</h3>
@@ -145,7 +148,7 @@ export function TicketCard({ ticket, onUpdateStatus }: TicketCardProps) {
         </div>
         <p>#{formatId(ticket.id)}</p>
         {ticket.description && <p className='desc'>{ticket.description}</p>}
-        <div className='card-hint'>Double-click to edit</div>
+        <div className='card-hint'>Click to view • Double-click to edit</div>
       </button>
     </li>
   );

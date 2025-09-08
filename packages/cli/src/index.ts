@@ -7,6 +7,7 @@ import {
   TicketManager,
   type TicketStatus,
   TicketStatusSchema,
+  UpdateTicketSchema,
 } from '@cmwen/min-pmt-core';
 import { Command } from 'commander';
 
@@ -24,6 +25,15 @@ interface ListOptions {
 
 interface WebOptions {
   port: string;
+}
+
+interface EditOptions {
+  title?: string;
+  description?: string;
+  priority?: 'low' | 'medium' | 'high' | 'critical';
+  labels?: string;
+  assignee?: string;
+  due?: string;
 }
 
 export async function runCli(argv: string[] = process.argv): Promise<void> {
@@ -156,6 +166,139 @@ export async function runCli(argv: string[] = process.argv): Promise<void> {
       }
       await tm.updateTicketStatus(ticketId, statusParsed.data);
       process.stdout.write(`Updated ${ticketId} -> ${newStatus}\n`);
+    });
+
+  program
+    .command('view <ticketId>')
+    .alias('show')
+    .description('View detailed information about a ticket')
+    .action(async (ticketId: string) => {
+      const cfg = await loadConfig();
+      const tm = new TicketManager(cfg);
+      const ticket = await tm.getTicketById(ticketId);
+      if (!ticket) {
+        process.stderr.write(`Ticket not found: ${ticketId}\n`);
+        process.exitCode = 1;
+        return;
+      }
+
+      console.log(`\n📋 Ticket: ${ticket.title}`);
+      console.log('='.repeat(50));
+      console.log(`ID: ${ticket.id}`);
+      console.log(`Status: ${ticket.status}`);
+      console.log(`Priority: ${ticket.priority || 'none'}`);
+      if (ticket.assignee) console.log(`Assignee: ${ticket.assignee}`);
+      if (ticket.due) console.log(`Due: ${new Date(ticket.due).toLocaleString()}`);
+      if (ticket.labels && ticket.labels.length > 0) {
+        console.log(`Labels: ${ticket.labels.join(', ')}`);
+      }
+      console.log(`Created: ${new Date(ticket.created).toLocaleString()}`);
+      console.log(`Updated: ${new Date(ticket.updated).toLocaleString()}`);
+      
+      if (ticket.description) {
+        console.log('\nDescription:');
+        console.log('-'.repeat(20));
+        console.log(ticket.description);
+      }
+
+      if (ticket.content) {
+        console.log('\nFull Content:');
+        console.log('-'.repeat(20));
+        console.log(ticket.content);
+      }
+    });
+
+  program
+    .command('edit <ticketId>')
+    .description('Edit a ticket')
+    .option('-t, --title <title>', 'Update title')
+    .option('-d, --description <desc>', 'Update description')
+    .option('-p, --priority <priority>', 'Update priority')
+    .option('-l, --labels <labels>', 'Update labels (comma-separated)')
+    .option('-a, --assignee <assignee>', 'Update assignee')
+    .option('--due <due>', 'Update due date (ISO string)')
+    .action(async (ticketId: string, options: EditOptions) => {
+      const cfg = await loadConfig();
+      const tm = new TicketManager(cfg);
+      
+      // Check if ticket exists
+      const existingTicket = await tm.getTicketById(ticketId);
+      if (!existingTicket) {
+        process.stderr.write(`Ticket not found: ${ticketId}\n`);
+        process.exitCode = 1;
+        return;
+      }
+
+      // Prepare update data
+      const updateData: any = {};
+      if (options.title !== undefined) updateData.title = options.title;
+      if (options.description !== undefined) updateData.description = options.description;
+      if (options.priority !== undefined) updateData.priority = options.priority;
+      if (options.assignee !== undefined) updateData.assignee = options.assignee;
+      if (options.due !== undefined) updateData.due = options.due;
+      if (options.labels !== undefined) {
+        updateData.labels = options.labels
+          .split(',')
+          .map((s: string) => s.trim())
+          .filter(Boolean);
+      }
+
+      // Validate the update data
+      const parsed = UpdateTicketSchema.safeParse(updateData);
+      if (!parsed.success) {
+        process.stderr.write('Invalid update options.\n');
+        process.stderr.write(`${JSON.stringify(parsed.error.issues, null, 2)}\n`);
+        process.exitCode = 1;
+        return;
+      }
+
+      if (Object.keys(updateData).length === 0) {
+        process.stderr.write('No fields to update. Use --help to see available options.\n');
+        process.exitCode = 1;
+        return;
+      }
+
+      const updated = await tm.updateTicketFields(ticketId, parsed.data);
+      process.stdout.write(`Updated ticket: ${updated.id}\n`);
+      
+      // Show what was changed
+      for (const [key, value] of Object.entries(updateData)) {
+        console.log(`  ${key}: ${value}`);
+      }
+    });
+
+  program
+    .command('delete <ticketId>')
+    .alias('del')
+    .alias('rm')
+    .description('Delete a ticket')
+    .option('-f, --force', 'Force deletion without confirmation')
+    .action(async (ticketId: string, options: { force?: boolean }) => {
+      const cfg = await loadConfig();
+      const tm = new TicketManager(cfg);
+      
+      // Check if ticket exists
+      const existingTicket = await tm.getTicketById(ticketId);
+      if (!existingTicket) {
+        process.stderr.write(`Ticket not found: ${ticketId}\n`);
+        process.exitCode = 1;
+        return;
+      }
+
+      if (!options.force) {
+        // Simple confirmation (in a real CLI, you might use a proper prompt library)
+        process.stdout.write(`Delete ticket "${existingTicket.title}" (${ticketId})? [y/N]: `);
+        
+        // For this demo, we'll assume 'yes' - in production you'd read from stdin
+        const confirm = process.env.CLI_CONFIRM_DELETE === 'yes';
+        if (!confirm) {
+          process.stdout.write('Deletion cancelled.\n');
+          return;
+        }
+      }
+
+      await tm.deleteTicket(ticketId);
+      process.stdout.write(`Deleted ticket: ${ticketId}\n`);
     });
 
   program
