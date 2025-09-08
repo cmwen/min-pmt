@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'preact/hooks';
+import { useCallback, useEffect, useState } from 'preact/hooks';
 import { Header } from './components/Header';
 import { KanbanBoard } from './components/KanbanBoard';
 
@@ -19,7 +19,7 @@ export function App() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchTickets = async () => {
+  const fetchTickets = useCallback(async () => {
     try {
       const response = await fetch('/api/tickets');
       if (!response.ok) throw new Error('Failed to fetch tickets');
@@ -30,7 +30,7 @@ export function App() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   const addTicket = async (title: string) => {
     try {
@@ -64,7 +64,7 @@ export function App() {
 
   useEffect(() => {
     fetchTickets();
-  }, []);
+  }, [fetchTickets]);
 
   const handleAddTicket = () => {
     const title = prompt('Ticket title?');
