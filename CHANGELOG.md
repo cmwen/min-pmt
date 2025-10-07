@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.3.0] - 2025-10-07
 
 ### Added
 - Comprehensive README with usage examples and installation instructions
@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhanced documentation with badges and better structure
 - **Automated CI/CD release workflow** - publish by pushing version tags
 - Comprehensive automated release guide (`docs/automated-release.md`)
+- CI/CD setup guide (`docs/ci-cd-setup.md`)
+- Production readiness documentation
 
 ### Changed
 - Improved README to be more user-friendly and comprehensive
@@ -28,6 +30,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Clarified single-module publishing model
 - Added automated release workflow guide
 - Updated CI/CD pipeline to bundle and verify before publishing
+
+## [Unreleased]
 
 ## [0.2.8] - 2024-09-09
 
