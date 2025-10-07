@@ -1,7 +1,13 @@
 {
   "name": "@cmwen/min-pmt-web",
   "version": "0.1.0",
-  "description": "Minimal Project Management Tool Web UI",
+  "description": "Web UI and REST API server for min-pmt with Kanban board",
+  "keywords": [
+    "project-management",
+    "kanban",
+    "web-ui",
+    "preact"
+  ],
   "type": "module",
   "main": "dist/index.js",
   "bin": {

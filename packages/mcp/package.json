@@ -1,7 +1,13 @@
 {
   "name": "@cmwen/min-pmt-mcp",
   "version": "0.1.0",
-  "description": "Minimal Project Management Tool MCP Server",
+  "description": "Model Context Protocol server for min-pmt - AI agent integration",
+  "keywords": [
+    "mcp",
+    "ai-agents",
+    "project-management",
+    "model-context-protocol"
+  ],
   "type": "module",
   "main": "dist/index.js",
   "bin": {
