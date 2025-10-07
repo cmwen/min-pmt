@@ -18,8 +18,10 @@
     "format": "biome format --write .",
     "format:check": "biome format .",
     "clean": "git clean -Xdf && rm -rf packages/**/dist",
+    "bundle:cli": "cd packages/cli && pnpm run build:bundle",
     "publish:cli": "cd packages/cli && pnpm run build:bundle && npm publish",
-    "bundle:cli": "cd packages/cli && pnpm run build:bundle"
+    "release": "./scripts/publish-single.sh",
+    "release:dry-run": "./scripts/publish-single.sh --dry-run"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.2.3",

@@ -8,9 +8,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Production readiness documentation and review
-- Comprehensive CHANGELOG.md
-- Package keywords for better discoverability
+- Comprehensive README with usage examples and installation instructions
+- Single-module publishing script (`scripts/publish-single.sh`)
+- `pnpm release` and `pnpm release:dry-run` commands
+- Enhanced documentation with badges and better structure
+
+### Changed
+- Improved README to be more user-friendly and comprehensive
+- Updated package descriptions with better keywords
+
+### Documentation
+- Added usage examples for all CLI commands
+- Documented AI agent integration
+- Added development setup instructions
+- Clarified single-module publishing model
 
 ## [0.2.8] - 2024-09-09
 
