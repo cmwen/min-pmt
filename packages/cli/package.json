@@ -1,7 +1,20 @@
 {
   "name": "@cmwen/min-pmt",
   "version": "0.2.8",
-  "description": "Minimal Project Management Tool CLI",
+  "description": "Minimal Project Management Tool CLI - Filesystem-backed ticket management with Markdown",
+  "keywords": [
+    "project-management",
+    "tickets",
+    "markdown",
+    "cli",
+    "local-first",
+    "git-friendly",
+    "kanban",
+    "todo",
+    "task-management",
+    "mcp",
+    "ai-agents"
+  ],
   "type": "module",
   "main": "dist/bundled.js",
   "bin": "dist/bundled.js",
