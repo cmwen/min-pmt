@@ -13,27 +13,46 @@ This guide explains how to publish min-pmt as a single npm module under the `@cm
 3. **Dependencies**: Minimal runtime deps (commander, gray-matter)
 4. **Distribution**: Single file is easier to distribute and cache
 
-## Prerequisites
+## Automated Release (Recommended)
 
-1. **npm Account**: Must be logged in with access to `@cmwen` scope
-   ```bash
-   npm login
-   npm whoami  # Verify login
-   ```
+**🚀 The easiest way to publish is using the automated CI/CD pipeline.**
 
-2. **Clean Working Directory**: Commit or stash all changes
-   ```bash
-   git status
-   ```
+See [Automated Release Guide](docs/automated-release.md) for complete instructions.
 
-3. **Passing Tests**: All quality gates must pass
-   ```bash
-   pnpm build && pnpm test
-   ```
+### Quick Start
 
-## Quick Publish
+```bash
+# 1. Bump version
+cd packages/cli
+npm version patch  # or minor/major
+cd ../..
 
-### Using the Publishing Script (Recommended)
+# 2. Update CHANGELOG.md
+vim CHANGELOG.md
+
+# 3. Commit and push
+git add packages/cli/package.json CHANGELOG.md
+git commit -m "chore: Bump version to 0.2.9"
+git push origin main
+
+# 4. Create and push tag - THIS TRIGGERS AUTOMATED RELEASE!
+git tag -a v0.2.9 -m "Release 0.2.9"
+git push origin v0.2.9
+```
+
+The CI/CD pipeline will automatically:
+- ✅ Run tests and linter
+- ✅ Build and bundle CLI
+- ✅ Publish to npm
+- ✅ Create GitHub Release
+
+**Setup Required**: Add `NPM_TOKEN` to GitHub secrets (see [Automated Release Guide](docs/automated-release.md#prerequisites))
+
+---
+
+## Manual Publishing
+
+If you prefer manual control or need to publish locally:
 
 ```bash
 # Dry run first (recommended)
@@ -54,7 +73,27 @@ The script will:
 8. ✅ Publish to npm
 9. ✅ Create git tag
 
-### Manual Publishing
+### Manual Publishing (Continued)
+
+### Prerequisites
+
+1. **npm Account**: Must be logged in with access to `@cmwen` scope
+   ```bash
+   npm login
+   npm whoami  # Verify login
+   ```
+
+2. **Clean Working Directory**: Commit or stash all changes
+   ```bash
+   git status
+   ```
+
+3. **Passing Tests**: All quality gates must pass
+   ```bash
+   pnpm build && pnpm test
+   ```
+
+### Using the Publishing Script
 
 ```bash
 # 1. Build and test

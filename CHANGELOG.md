@@ -12,16 +12,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Single-module publishing script (`scripts/publish-single.sh`)
 - `pnpm release` and `pnpm release:dry-run` commands
 - Enhanced documentation with badges and better structure
+- **Automated CI/CD release workflow** - publish by pushing version tags
+- Comprehensive automated release guide (`docs/automated-release.md`)
 
 ### Changed
 - Improved README to be more user-friendly and comprehensive
 - Updated package descriptions with better keywords
+- Enhanced release workflow with bundling, verification, and GitHub Releases
+- PUBLISHING.md now recommends automated workflow
 
 ### Documentation
 - Added usage examples for all CLI commands
 - Documented AI agent integration
 - Added development setup instructions
 - Clarified single-module publishing model
+- Added automated release workflow guide
+- Updated CI/CD pipeline to bundle and verify before publishing
 
 ## [0.2.8] - 2024-09-09
 

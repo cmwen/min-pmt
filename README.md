@@ -223,15 +223,35 @@ pnpm format
 
 ### Publishing
 
-The project uses a bundled publishing model - only the CLI package is published:
+The project uses automated CI/CD for publishing:
 
 ```bash
-# Bundle and publish
-pnpm publish:cli
+# 1. Bump version
+cd packages/cli && npm version patch && cd ../..
 
-# Or use the comprehensive publishing script
-pnpm release
+# 2. Update CHANGELOG.md
+
+# 3. Commit and push to main
+git add . && git commit -m "chore: Bump version" && git push
+
+# 4. Create and push tag - triggers automated release!
+git tag -a v0.2.9 -m "Release 0.2.9"
+git push origin v0.2.9
 ```
+
+The CI/CD pipeline automatically:
+- Runs tests and builds
+- Bundles CLI with Rolldown
+- Publishes to npm as `@cmwen/min-pmt`
+- Creates GitHub Release
+
+For manual publishing, use:
+```bash
+pnpm release       # Full publish workflow
+pnpm release:dry-run  # Test without publishing
+```
+
+See [Automated Release Guide](docs/automated-release.md) for details.
 
 ## 📚 Documentation
 
