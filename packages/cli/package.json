@@ -1,6 +1,6 @@
 {
   "name": "@cmwen/min-pmt",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Minimal Project Management Tool CLI - Filesystem-backed ticket management with Markdown",
   "keywords": [
     "project-management",
