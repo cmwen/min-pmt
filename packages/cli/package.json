@@ -37,6 +37,7 @@
   },
   "devDependencies": {
     "@cmwen/min-pmt-core": "workspace:*",
+    "@cmwen/min-pmt-mcp": "workspace:*",
     "@cmwen/min-pmt-web": "workspace:*",
     "rolldown": "1.0.0-beta.36",
     "vitest": "latest",

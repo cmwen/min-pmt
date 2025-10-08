@@ -277,6 +277,16 @@ program
 
 // Start web UI
 program
+    .command('mcp')
+    .description('Start MCP server (stdio transport)')
+    .action(async () => {
+      const cfg = await loadConfig();
+      const { MinPmtMcpServer } = await import('@cmwen/min-pmt-mcp');
+      const server = new MinPmtMcpServer(cfg);
+      await server.startStdio();
+    });
+
+  program
   .command('web')
   .description('Start web UI server')
   .option('-p, --port <port>', 'Port number', '3000')

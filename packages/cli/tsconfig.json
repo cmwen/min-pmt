@@ -6,5 +6,5 @@
     "composite": true
   },
   "include": ["src/**/*.ts"],
-  "references": [{ "path": "../core" }, { "path": "../web" }]
+  "references": [{ "path": "../core" }, { "path": "../web" }, { "path": "../mcp" }]
 }

@@ -49,6 +49,9 @@ importers:
       '@cmwen/min-pmt-core':
         specifier: workspace:*
         version: link:../core
+      '@cmwen/min-pmt-mcp':
+        specifier: workspace:*
+        version: link:../mcp
       '@cmwen/min-pmt-web':
         specifier: workspace:*
         version: link:../web
