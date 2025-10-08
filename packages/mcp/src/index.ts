@@ -1,4 +1,4 @@
-import { TicketManager, type ProjectConfig } from '@cmwen/min-pmt-core';
+import { type ProjectConfig, TicketManager } from '@cmwen/min-pmt-core';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
