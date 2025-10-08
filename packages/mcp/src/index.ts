@@ -1,4 +1,4 @@
-import { TicketManager } from '@cmwen/min-pmt-core';
+import { type ProjectConfig, TicketManager } from '@cmwen/min-pmt-core';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
@@ -7,9 +7,9 @@ export class MinPmtMcpServer {
   private server: McpServer;
   private manager: TicketManager;
 
-  constructor() {
+  constructor(config?: ProjectConfig) {
     this.server = new McpServer({ name: 'min-pmt-mcp', version: '0.1.0' });
-    this.manager = new TicketManager();
+    this.manager = new TicketManager(config);
     this.registerTools();
   }
 

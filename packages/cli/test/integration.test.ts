@@ -1,7 +1,25 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { runCli } from '../src/index.js';
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+
+const mcpStartMock = vi.fn(async () => {});
+const mcpConstructedWith: unknown[] = [];
+
+vi.mock('@cmwen/min-pmt-mcp', () => ({
+  MinPmtMcpServer: class {
+    constructor(config: unknown) {
+      mcpConstructedWith.push(config);
+    }
+
+    startStdio = mcpStartMock;
+  },
+}));
+
+let runCli: typeof import('../src/index.js').runCli;
+
+beforeAll(async () => {
+  ({ runCli } = await import('../src/index.js'));
+});
 
 const pmtDir = path.join(process.cwd(), 'pmt');
 
@@ -32,6 +50,8 @@ describe('CLI integration', () => {
   beforeEach(async () => {
     await fs.rm(pmtDir, { recursive: true, force: true });
     vi.spyOn(console, 'table').mockImplementation(() => undefined as any);
+    mcpConstructedWith.length = 0;
+    mcpStartMock.mockClear();
   });
 
   it('init creates config and folder', async () => {
@@ -72,6 +92,19 @@ describe('CLI integration', () => {
       await runCli(['node', 'min-pmt', 'move', id, 'done']);
     })) as { out: string; err: string };
     expect(moved.out).toMatch(/Updated/);
+  });
+
+  it('mcp starts stdio MCP server without extraneous output', async () => {
+    await runCli(['node', 'min-pmt', 'init']);
+    const result = (await withCapturedIO(async () => {
+      await runCli(['node', 'min-pmt', 'mcp']);
+    })) as { out: string; err: string };
+
+    expect(result.out).toBe('');
+    expect(result.err).toBe('');
+    expect(mcpStartMock).toHaveBeenCalledTimes(1);
+    expect(mcpConstructedWith).toHaveLength(1);
+    expect(mcpConstructedWith[0]).toMatchObject({ folder: 'pmt' });
   });
 });
 

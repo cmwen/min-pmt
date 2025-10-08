@@ -35,6 +35,9 @@ npx @cmwen/min-pmt list
 
 # Start web UI
 npx @cmwen/min-pmt web
+
+# Start MCP server for AI clients
+npx @cmwen/min-pmt mcp
 ```
 
 ### Global Installation (Optional)
@@ -68,6 +71,9 @@ min-pmt move ticket-fix-bug-abc123 done
 
 # Start web UI on custom port
 min-pmt web --port 8080
+
+# Expose the MCP server over stdio for AI tooling
+min-pmt mcp
 ```
 
 ### Web UI
@@ -151,6 +157,13 @@ git add pmt/ && git commit -m "Add auth tickets"
 ## 🤖 AI Agent Integration
 
 min-pmt includes an MCP (Model Context Protocol) server for AI agents:
+
+```bash
+# Expose the MCP server over stdio (ideal for GitHub Copilot, custom LLM tools, etc.)
+min-pmt mcp
+```
+
+Agents that speak MCP can connect over stdio and use the same ticket folder and state configuration as the CLI.
 
 ```javascript
 // AI agents can create and manage tickets programmatically

@@ -258,6 +258,12 @@
 - Consider adding package for shared types/utilities if needed in the future
 - Inline editing UI is implemented but needs backend API extension for persistence
 - Add configuration validation to prevent invalid state or field configurations
+
+## 2025-10-08 - CLI MCP wiring
+
+- Feature: Exposed the MCP server through the CLI via a new `min-pmt mcp` command that launches the stdio transport.
+- Tests: Extended CLI integration suite to mock the MCP package, ensuring no extraneous output and that project configuration is passed through.
+- Notes [Execution → QA]: `@cmwen/min-pmt-mcp` now exports type declarations and is referenced by the CLI project; documentation updated to highlight the new command.
 - Consider implementing configuration migration utilities for major schema changes
 
 ## Suggested Tests

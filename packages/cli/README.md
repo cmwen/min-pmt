@@ -125,6 +125,17 @@ min-pmt move <ticketId> <newStatus>
 min-pmt move ticket-fix-bug-abc123 done
 ```
 
+### `mcp`
+Start the MCP (Model Context Protocol) server over stdio for AI agents. The server loads your current project configuration so tickets created through MCP use the same folder, states, and templates as the CLI.
+
+```bash
+min-pmt mcp
+```
+
+**Notes:**
+- Designed to be executed by MCP-compatible AI clients; it emits protocol traffic over stdio and intentionally produces no human-readable output.
+- Use Ctrl+C to terminate the process when running manually.
+
 ### `web`
 Start the web UI server for visual ticket management.
 
@@ -215,6 +226,17 @@ npx @cmwen/min-pmt add "Deploy to production" --priority critical
 # List failed build tickets
 npx @cmwen/min-pmt list --labels build --status todo
 ```
+
+### AI Agent Integration (MCP)
+Expose the MCP server for compatible AI assistants:
+
+```bash
+min-pmt mcp
+```
+
+- Streams Model Context Protocol messages over stdio (no human-oriented output)
+- Reuses your local configuration, so tickets land in the same folder and state definitions
+- Ideal for wiring agents like GitHub Copilot or custom LLM tools into your ticket workflow
 
 ## API Usage
 

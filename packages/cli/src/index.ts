@@ -326,6 +326,22 @@ export async function runCli(argv: string[] = process.argv): Promise<void> {
     });
 
   program
+    .command('mcp')
+    .description('Start the MCP server for AI agents (stdio transport)')
+    .action(async () => {
+      try {
+        const cfg = await loadConfig();
+        const { MinPmtMcpServer } = await import('@cmwen/min-pmt-mcp');
+        const server = new MinPmtMcpServer(cfg);
+        await server.startStdio();
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        process.stderr.write(`Failed to start MCP server: ${message}\n`);
+        process.exitCode = 1;
+      }
+    });
+
+  program
     .command('web')
     .description('Start web UI server')
     .option('-p, --port <port>', 'Port number', '3000')
